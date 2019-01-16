@@ -1,14 +1,15 @@
 # SurfaceGenie_0.1/server.R
 library(shiny)
+library(plotly)
 library(RColorBrewer) 
 library(stringr)
-library(ggplot2)
+#library(ggplot2)
 library(svglite)
 source("functions.R")
 `%then%` <- shiny:::`%OR%`
 
 
-function(input, output) {
+function(input, output, session) {
   
   ##########          SurfaceGenie         ##########
   
@@ -104,6 +105,24 @@ function(input, output) {
     })
   
   ##########  SurfaceGenie: Output Display  ##########
+  
+ myChoiceNames = list(
+   "SPC score (SPC)",
+   "CD molecules",
+   "Number of CSPA experiments",
+   "Gini coefficient (Gini)",
+   "Signal strength (SS)",
+   "SurfaceGenie: Genie Score (GS)",
+   "UniProt Linkout")
+ myChoiceValues= list(
+   "SPC", "CD", "CSPA #e", "Gini", "SS", "GS", "UniProt Linkout")
+ 
+ observe({
+   updateCheckboxGroupInput(
+     session, 'export_options', choiceNames=myChoiceNames, choiceValues = myChoiceValues, 
+     selected = if (input$bar) myChoiceValues
+   )
+ })
   
   # Apply export options
   data_export <- reactive({
@@ -221,10 +240,11 @@ function(input, output) {
   })
   
   # SG: Genie Score plot
-  output$SG_dist <- renderPlot({
+  output$SG_dist <- renderPlotly({
     req(input$file1)
     SG_dist(data_output())
   })
+
   output$SG_dist_PNGdl <- downloadHandler(
     filename = function() { 
       fname <- unlist(strsplit(as.character(input$file1), "[.]"))[1]
@@ -316,6 +336,9 @@ function(input, output) {
   SPC_bulk_output <- reactive({
     SPC_lookup(SPC_bulk_input())
   })
+  SPC_bulk_output_for_export <- reactive({
+    SPC_lookup_for_export(SPC_bulk_input())
+  })
   
   # Display data
   output$SPC_bulk_output <- renderTable({
@@ -334,7 +357,7 @@ function(input, output) {
       paste(fname, "_SPC.csv", sep = "")
     },
     content = function(filename) {
-      write.csv(SPC_bulk_output(), filename, row.names = FALSE)
+      write.csv(SPC_bulk_output_for_export(), filename, row.names = FALSE)
     }
   )
   output$SPC_csv_dlbutton <- renderUI({
