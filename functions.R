@@ -3,7 +3,8 @@ library(plyr)
 library(stringr)
 library(wordspace)
 library(gplots)
-library(RColorBrewer) 
+library(RColorBrewer)
+library(plotly)
 
 ##########  Genie Score Sub Functions  ##########
 
@@ -35,7 +36,7 @@ get_Gini_coeff <- function(sdata, nsamps) {
 }
 
 get_signal_strength <- function(sdata) {
-  return(log10(max(sdata)))
+  return(log10(max(sdata)+1))
 }
 
 get_SG_score <- function(pdata, nsamps) {
@@ -78,6 +79,13 @@ get_numCSPA <- function(adata, Accession) {
   df <- data.frame(Accession)
   df <- join(df, CSPA, by="Accession", match="all")
   adata["CSPA #e"] <- df["CSPA..e"]
+  return(adata)
+}
+get_geneName <- function(adata, Accession) {
+  gn <- read.csv("ref/GeneName.csv", header=TRUE)
+  df <- data.frame(Accession)
+  df <- join(df, gn, by="Accession", match="all")
+  adata["geneName"] <- df["GeneName"]
   return(adata)
 }
 
@@ -165,17 +173,33 @@ SPC_hist <- function(adata) {
 SG_dist <- function(adata) {
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
   adata <- get_CD(adata, accessions)
-  adata <- adata[,c("GS", "CD")]
+  adata <- get_geneName(adata, accessions)
+  adata <- adata[,c("Accession", "geneName", "GS", "CD")]
   adata <- adata[order(-adata$GS),]
-  CD <- adata[,"GS"]
-  CD[is.na(adata[,"CD"])] <- NA
-  plot(1:nrow(adata), adata[,"GS"], xlab="Proteins", ylab="Genie Score", 
-       main="Genie Scores in Descending Order",
-       col="#C0C0C0")
-  points(1:nrow(adata), CD, pch=16, col="#3498db")
-  legend("topright", legend="CD molecules", col="#3498db", pch=16,
-         inset=0.02, box.lwd=0)
+  CD <- adata[,"CD"]
+  df = data.frame(CD)
+  df$CD<-as.character(df$CD)
+  df$CD[!is.na(df$CD)]<-"CD"
+  df$CD[is.na(df$CD)]<-"non-CD"
+  adata["isCD"]<-df["CD"]
+  plot_ly(data=adata,
+          x=~1:nrow(adata),
+          y=~GS, 
+          type = 'scatter', 
+          mode='markers', 
+          hoverinfo = 'text', 
+          text=paste("Gene Name: ", adata$geneName, "<br>Accession: ", adata$Accession, "<br>CD: ", adata$CD), 
+          color=~isCD,
+          colors="Set1"
+        ) %>%
+          layout(
+            title="Genie Scores in Descending Order",
+            xaxis=list(title="rank"),
+            yaxis=list(title="GS Score"),
+            legend=list(x=0.7,y=0.9)
+          )
 }
+
 
 SG_heatmap <- function(adata, hcopts) {
   sdata <- normalize.rows(data.matrix(adata[,2:ncol(adata)]))
@@ -202,9 +226,37 @@ SPC_lookup <- function(sdata) {
   else{
     Accession <- laply(laply(sdata[,1], as.character), split_acc_iso)
   }
-  SPC_scores <- read.csv(file="ref/SPC.csv", header=TRUE)
+  SPC_scores <- read.csv(file="ref/SPC_by_Source.csv", header=TRUE)
   noiso <- data.frame(Accession)
   noiso_SPC <- join(noiso, SPC_scores, by="Accession", match="first")
   sdata["SPC"] <- noiso_SPC["SPC"]
+  sdata["SURFY"] <- noiso_SPC["SURFY"]
+  sdata["Town"] <- noiso_SPC["Town"]
+  sdata["Cunha"] <- noiso_SPC["Cunha"]
+  sdata["Diaz-Ramos"] <- noiso_SPC["Diaz.Ramos"]
+  sdata[,3:6][is.na(sdata[,3:6])] = " "
+  sdata[,3:6][sdata[,3:6]>0] = "\u00A0\u00A0\u00A0\u00A0\u00A0\u2713"
+  sdata[,3:6][sdata[,3:6]=="0"] = " "
+  return(sdata)
+}
+
+SPC_lookup_for_export <- function(sdata) {
+  if("Accession" %in% colnames(sdata)){
+    Accession <- laply(laply(sdata["Accession"], as.character), split_acc_iso)
+  }
+  else{
+    Accession <- laply(laply(sdata[,1], as.character), split_acc_iso)
+  }
+  SPC_scores <- read.csv(file="ref/SPC_by_Source.csv", header=TRUE)
+  noiso <- data.frame(Accession)
+  noiso_SPC <- join(noiso, SPC_scores, by="Accession", match="first")
+  sdata["SPC"] <- noiso_SPC["SPC"]
+  sdata["SURFY"] <- noiso_SPC["SURFY"]
+  sdata["Town"] <- noiso_SPC["Town"]
+  sdata["Cunha"] <- noiso_SPC["Cunha"]
+  sdata["Diaz-Ramos"] <- noiso_SPC["Diaz.Ramos"]
+  sdata[,3:6][is.na(sdata[,3:6])] = 0
+  sdata[,3:6][sdata[,3:6]>0] = 1
+  sdata[,3:6][sdata[,3:6]=="0"] = 0
   return(sdata)
 }
