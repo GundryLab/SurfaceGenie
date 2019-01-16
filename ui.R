@@ -1,5 +1,6 @@
 # SurfaceGenie_0.1/ui.R
 library(shiny)
+library(plotly)
 
 shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
   
@@ -146,7 +147,7 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
       hr(),
       h5(class="text-info", "Export Options"),
       checkboxGroupInput(
-        "export_options", "Choose variables to export:",
+        'export_options', "Choose variables to export:",
         choiceNames = list(
           "SPC score (SPC)",
           "CD molecules",
@@ -158,8 +159,10 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
         choiceValues = list(
           "SPC", "CD", "CSPA #e", "Gini", "SS", "GS", "UniProt Linkout"),
         selected = list("GS")
-      )
+      ),
+      checkboxInput('bar', 'All/None')
     ),
+    
     mainPanel(
       tabsetPanel(type = "tabs",
                   tabPanel(
@@ -275,7 +278,8 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
                     plotOutput("SG_SPC_hist"),
                     uiOutput("SG_SPC_hist_PNGdlbutton"),
                     uiOutput("SG_SPC_hist_SVGdlbutton"),
-                    plotOutput("SG_dist"),
+                    p(),
+                    plotlyOutput("SG_dist"),
                     uiOutput("SG_dist_PNGdlbutton"),
                     uiOutput("SG_dist_SVGdlbutton"),
                     br()
