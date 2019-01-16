@@ -1,0 +1,59 @@
+############################################################
+
+                    SurfaceGenie - v.0.2                    
+               
+############################################################
+
+Authors: Matthew Waas, Shana Snarrenberg, Dr. Rebekah Gundry
+
+PROGRAM FILES:
+
+  ui.R
+  server.R
+  functions.r
+  
+LOOKUP FILES:
+
+  ref/SPC.csv
+  ref/HLA.csv
+  
+OTHER FILES:
+
+  ref/example_data.csv
+  www/boostrap.css
+  
+SITEMAP:
+
+  Home
+  SurfaceGenie
+    Instructions
+    Data Input
+    SurfaceGenie: Plots 
+    SurfaceGenie: CSV
+  SPC Lookup
+    Instructions
+    Quick Lookup
+    Bulk Lookup
+  Contact
+
+FEATURES:
+  
+  SurfaceGenie
+    - Upload csv of sample data
+    - Proccessing options:
+        - Do/Don't consider SPC
+        - Exclude HLA molecules
+        - Group samples togehter
+    - Exporting options
+        - Include/exclude columns
+  SPC Lookup
+    - Quick lookup of single proteins or a list of proteins up to 100
+    - Bulk Lookup w/ download file
+  
+VERSION UPDATES:
+
+  - data_output() gives standard export with SPC and GS
+  - data_export() gives extra export options
+  
+
+  
