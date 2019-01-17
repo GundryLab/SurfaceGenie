@@ -218,7 +218,7 @@ function(input, output, session) {
   )
   output$SG_SPC_hist_PNGdlbutton <- renderUI({
     req(input$file1)
-    downloadButton("SG_SPC_hist_PNGdl", "Download SPC Histogram as .png")
+    downloadButton("SG_SPC_hist_PNGdl", "as .png", class="download_this")
   })
   output$SG_SPC_hist_SVGdl <- downloadHandler(
     filename = function() { 
@@ -236,7 +236,7 @@ function(input, output, session) {
   )
   output$SG_SPC_hist_SVGdlbutton <- renderUI({
     req(input$file1)
-    downloadButton("SG_SPC_hist_SVGdl", "Download SPC Histogram as .svg")
+    downloadButton("SG_SPC_hist_SVGdl", "as .svg", class="download_this")
   })
   
   # SG: Genie Score plot
@@ -261,7 +261,7 @@ function(input, output, session) {
   )
   output$SG_dist_PNGdlbutton <- renderUI({
     req(input$file1)
-    downloadButton("SG_dist_PNGdl", "Download GS Distribution as .png")
+    downloadButton("SG_dist_PNGdl", "as .png", class="download_this")
   })
   output$SG_dist_SVGdl <- downloadHandler(
     filename = function() { 
@@ -279,7 +279,7 @@ function(input, output, session) {
   )
   output$SG_dist_SVGdlbutton <- renderUI({
     req(input$file1)
-    downloadButton("SG_dist_SVGdl", "Download GS Distribution as .svg")
+    downloadButton("SG_dist_SVGdl", "as .svg", class="download_this")
   })
   
   # Downloadable csv of selected dataset

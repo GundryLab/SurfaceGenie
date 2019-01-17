@@ -6527,3 +6527,21 @@ a.list-group-item-danger.active:focus {
 .popover {
   color: #2c3e50;
 }
+.download_this{
+  padding-top:1px !important;
+  padding-bottom:1px !important;
+  padding-left:1px !important;
+  padding-right:1px !important;
+  display:inline-block;
+}
+.bnav {
+  margin-bottom:0;
+  padding-left:0;
+  list-style:none;
+  text-align:center;
+}
+.bnav > li {
+  display:inline-block;
+  text-align:center;
+}
+
