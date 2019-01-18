@@ -190,13 +190,13 @@ SG_dist <- function(adata) {
           hoverinfo = 'text', 
           text=paste("Gene Name: ", adata$geneName, "<br>Accession: ", adata$Accession, "<br>CD: ", adata$CD), 
           color=~isCD,
-          colors="Set1"
+          colors=c("#00aaff", "#c9c9d4") # blue, grey
         ) %>%
           layout(
             title="Genie Scores in Descending Order",
             xaxis=list(title="rank"),
-            yaxis=list(title="GS Score"),
-            legend=list(x=0.7,y=0.9)
+            yaxis=list(title="Genie Score"),
+            legend=list(x=0.7,y=0.9) # controls the location on the plot of the legend
           )
 }
 
