@@ -200,6 +200,20 @@ SG_dist <- function(adata) {
           )
 }
 
+SG_dist_export <- function(adata) {
+  accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
+  adata <- get_CD(adata, accessions)
+  adata <- adata[,c("GS", "CD")]
+  adata <- adata[order(-adata$GS),]
+  CD <- adata[,"GS"]
+  CD[is.na(adata[,"CD"])] <- NA
+  plot(1:nrow(adata), adata[,"GS"], xlab="rank", ylab="Genie Score", 
+       main="Genie Scores in Descending Order",
+       col="#C0C0C0")
+  points(1:nrow(adata), CD, pch=16, col="#3498db")
+  legend("topright", legend="CD molecules", col="#3498db", pch=16,
+         inset=0.02, box.lwd=0)
+}
 
 SG_heatmap <- function(adata, hcopts) {
   sdata <- normalize.rows(data.matrix(adata[,2:ncol(adata)]))
