@@ -176,7 +176,7 @@ function(input, output, session) {
   )
   output$SG_hm_PNGdlbutton <- renderUI({
     req(input$file1)
-    downloadButton("SG_heatmap_PNGdl", "Download Heatmap as .png")
+    downloadButton("SG_heatmap_PNGdl", " .png")
   })
   output$SG_heatmap_SVGdl <- downloadHandler(
     filename = function() { 
@@ -194,7 +194,7 @@ function(input, output, session) {
   )
   output$SG_hm_SVGdlbutton <- renderUI({
     req(input$file1)
-    downloadButton("SG_heatmap_SVGdl", "Download Heatmap as .svg")
+    downloadButton("SG_heatmap_SVGdl", " .svg")
   })
   
   # SG: SPC histogram
@@ -253,7 +253,7 @@ function(input, output, session) {
     content = function(file) {
       png(file,
           width=5*300,
-          height=3*300,
+          height=4*300,
           res=300)
 #      SG_dist(data_output())
       SG_dist_export(data_output())
@@ -272,7 +272,7 @@ function(input, output, session) {
     content = function(file) {
       svg(file,
           width=5,
-          height=3,
+          height=4,
           pointsize=10)
       SG_dist_export(data_output())
       dev.off()
@@ -295,7 +295,8 @@ function(input, output, session) {
   )
   output$csv_dlbutton <- renderUI({
     req(input$file1)
-    downloadButton("csv_download", "Download .csv file output")
+#    downloadButton("csv_download", "Download .csv file output")
+    downloadButton("csv_download", " .csv")
   })
   
   ##########      SPC Quick Lookup      ##########

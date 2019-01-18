@@ -270,8 +270,10 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
                     ),
                     hr(),
                     plotOutput("SG_heatmap"),
-                    uiOutput("SG_hm_PNGdlbutton"),
-                    uiOutput("SG_hm_SVGdlbutton")
+                    p(),
+                    div(class="bnav",
+                    uiOutput("SG_hm_PNGdlbutton", class="download_this"),
+                    uiOutput("SG_hm_SVGdlbutton", class="download_this"))
                   ),
                   tabPanel(
                     "Plots",
