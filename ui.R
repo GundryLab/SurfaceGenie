@@ -145,7 +145,7 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
         )
       ),
       hr(),
-      h5(class="text-info", "Export Options"),
+      h5(class="text-info", "Export Options (for CSV Download Tab)"),
       checkboxGroupInput(
         'export_options', "Choose variables to export:",
         choiceNames = list(

@@ -182,20 +182,23 @@ SG_dist <- function(adata) {
   df$CD[!is.na(df$CD)]<-"CD"
   df$CD[is.na(df$CD)]<-"non-CD"
   adata["isCD"]<-df["CD"]
+  fa<-list(family="Arial, sans-serif", size=12)
+  ft<-list(family="Arial, sans-serif", size=14, color='black')
   plot_ly(data=adata,
           x=~1:nrow(adata),
           y=~GS, 
           type = 'scatter', 
           mode='markers', 
           hoverinfo = 'text', 
+          hoverlabel = list(bgcolor='white'),
           text=paste("Gene Name: ", adata$geneName, "<br>Accession: ", adata$Accession, "<br>CD: ", adata$CD), 
           color=~isCD,
-          colors=c("#00aaff", "#c9c9d4") # blue, grey
+          colors=c("#3498db", "#c9c9d4") # blue, grey
         ) %>%
           layout(
-            title="Genie Scores in Descending Order",
-            xaxis=list(title="rank"),
-            yaxis=list(title="Genie Score"),
+            title="<b>Genie Scores in Descending Order</b>", titlefont=ft,
+            xaxis=list(title="rank", titlefont=fa, showgrid=FALSE),
+            yaxis=list(title="Genie Score", titlefont=fa, showgrid=FALSE),
             legend=list(x=0.7,y=0.9) # controls the location on the plot of the legend
           )
 }
