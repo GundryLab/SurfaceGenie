@@ -154,49 +154,7 @@ function(input, output, session) {
     req(input$file1)
     sprintf("[ %d rows x %d columns ]", data_export()[[2]][1], data_export()[[2]][2])
   })
-  
-  # SG: Heatmap
-  output$SG_heatmap <- renderPlot({ 
-    req(input$file1)
-    SG_heatmap(data_input()[[1]], input$hcopts)
-  })
-  output$SG_heatmap_PNGdl <- downloadHandler(
-    filename = function() { 
-      fname <- unlist(strsplit(as.character(input$file1), "[.]"))[1]
-      paste(fname, '_SGheatmap.png', sep='') 
-    },
-    content = function(file) {
-      png(file,
-          width=10*300,
-          height=10*300,
-          res=300)
-      SG_heatmap(data_input()[[1]], input$hcopts)
-      dev.off()
-    }
-  )
-  output$SG_hm_PNGdlbutton <- renderUI({
-    req(input$file1)
-    downloadButton("SG_heatmap_PNGdl", " .png")
-  })
-  output$SG_heatmap_SVGdl <- downloadHandler(
-    filename = function() { 
-      fname <- unlist(strsplit(as.character(input$file1), "[.]"))[1]
-      paste(fname, '_SGheatmap.svg', sep='') 
-    },
-    content = function(file) {
-      svg(file,
-          width=5,
-          height=5,
-          pointsize=10)
-      SG_heatmap(data_input()[[1]], input$hcopts)
-      dev.off()
-    }
-  )
-  output$SG_hm_SVGdlbutton <- renderUI({
-    req(input$file1)
-    downloadButton("SG_heatmap_SVGdl", " .svg")
-  })
-  
+
   # SG: SPC histogram
   output$SG_SPC_hist <- renderPlot({
     req(input$file1)
