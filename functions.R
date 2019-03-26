@@ -218,21 +218,6 @@ SG_dist_export <- function(adata) {
          inset=0.02, box.lwd=0)
 }
 
-SG_heatmap <- function(adata, hcopts) {
-  sdata <- normalize.rows(data.matrix(adata[,2:ncol(adata)]))
-  hmcol <- colorRampPalette(brewer.pal(9, "GnBu"))(100)
-  rowhc <- "row" %in% hcopts
-  colhc <- "column" %in% hcopts
-  if("both" %in% hcopts){
-    rowhc = TRUE
-    colhc = TRUE
-  }
-  lhei <- c(1, 5)
-  lwid <- c(1, 3)
-  heatmap.2(sdata, Rowv=rowhc, Colv=colhc, dendrogram=hcopts, trace="none", col=hmcol,
-            key.title=NA, key.xlab=NA, key.ylab=NA, lhei=lhei, lwid=lwid, labRow=FALSE,
-            main="SurfaceGenie: Input Data Heatmap", ylab="Proteins")
-}
 
 ##########  SPC Lookup  ##########
 
