@@ -257,25 +257,6 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
                     em(textOutput("input_size"))
                   ),
                   tabPanel(
-                    "Heatmap",
-                    h5(class="text-info", "Heatmap Options"),
-                    radioButtons(
-                      "hcopts", "Hierarchical clustering:",
-                      choices=c("None" = "none",
-                                "Rows" = "row",
-                                "Columns" = "column",
-                                "Both" = "both"),
-                      selected="row",
-                      inline=TRUE
-                    ),
-                    hr(),
-                    plotOutput("SG_heatmap"),
-                    p(),
-                    div(class="bnav",
-                    uiOutput("SG_hm_PNGdlbutton", class="download_this"),
-                    uiOutput("SG_hm_SVGdlbutton", class="download_this"))
-                  ),
-                  tabPanel(
                     "Plots",
                     plotOutput("SG_SPC_hist"),
                     div(class="bnav",
