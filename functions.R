@@ -103,12 +103,6 @@ SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupco
     reqcols <- colnames(adata)
   }
   
-  # Exclude HLA molecules
-  if("HLA" %in% processing_opts){
-    adata <- filter_by_HLA(adata, accessions)
-    accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
-  }
-  
   # Get proteins where SPC score > 0
   if("SPC" %in% processing_opts){
     adata <- filter_by_SPC(adata, accessions)
@@ -139,8 +133,20 @@ SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupco
 ##########  SurfaceGenie Export  ##########
 
 SG_export <- function(adata, exportvars) {
+  
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
   reqcols <- colnames(adata)[1:(ncol(adata)-4)]
+
+  # Exclude HLA molecules
+  if("HLA" %in% exportvars){
+    adata <- filter_by_HLA(adata, accessions)
+    accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
+    #need to remove HLA from exportvars because the other vars concern the number
+    #of columns whereas HLA is the rows.  At the end of this function, the exportvars
+    #gets passed and can't have any variables that concern rows.
+    ev<-c("HLA")
+    exportvars <- exportvars[!exportvars %in% ev]
+  }
   
   # Export option: append uniprot linkout column
   if("UniProt Linkout" %in% exportvars){
