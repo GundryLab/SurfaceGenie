@@ -81,13 +81,12 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
         "processing_opts", "Select processing options:",
         choiceNames = list(
           "Consider SPC",
-          "Exclude HLA molecules",
           "Find markers for specific sample",
           "Group samples"),
         choiceValues = list(
-          "SPC", "HLA", "smarker", "grouping"),
+          "SPC", "smarker", "grouping"),
         selected = c(
-          "SPC", "HLA")
+          "SPC")
       ),
       conditionalPanel(
         condition = "input.processing_opts.indexOf('smarker') > -1",
@@ -150,6 +149,7 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
         'export_options', "Choose variables to export:",
         choiceNames = list(
           "SPC score (SPC)",
+          "Exclude HLA molecules",
           "CD molecules",
           "Number of CSPA experiments",
           "Gini coefficient (Gini)",
@@ -157,8 +157,8 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
           "SurfaceGenie: Genie Score (GS)",
           "UniProt Linkout"),
         choiceValues = list(
-          "SPC", "CD", "CSPA #e", "Gini", "SS", "GS", "UniProt Linkout"),
-        selected = list("GS")
+          "SPC", "HLA", "CD", "CSPA #e", "Gini", "SS", "GS", "UniProt Linkout"),
+        selected = list("GS", "HLA")
       ),
       checkboxInput('bar', 'All/None')
     ),
