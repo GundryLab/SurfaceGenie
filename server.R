@@ -108,6 +108,7 @@ function(input, output, session) {
   
  myChoiceNames = list(
    "SPC score (SPC)",
+   "Exclude HLA molecules",
    "CD molecules",
    "Number of CSPA experiments",
    "Gini coefficient (Gini)",
@@ -115,7 +116,7 @@ function(input, output, session) {
    "SurfaceGenie: Genie Score (GS)",
    "UniProt Linkout")
  myChoiceValues= list(
-   "SPC", "CD", "CSPA #e", "Gini", "SS", "GS", "UniProt Linkout")
+   "SPC", "HLA", "CD", "CSPA #e", "Gini", "SS", "GS", "UniProt Linkout")
  
  observe({
    updateCheckboxGroupInput(
