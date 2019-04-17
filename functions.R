@@ -15,10 +15,14 @@ split_acc_iso <- function(protID) {
 filter_by_SPC <- function(adata, Accession) {
   SPC_scores <- read.csv(file="ref/SPC.csv", header=TRUE)
   noiso <- data.frame(Accession)
-  noiso_SPC <- join(noiso, SPC_scores, by="Accession", match="first")
+  noiso_SPC <- join(noiso, SPC_scores, by="Accession", type="left", match="first")
+  noiso_SPC["SPC"][is.na(noiso_SPC["SPC"])]<-0
   adata["SPC"] <- noiso_SPC["SPC"]
-  idx <- sapply(adata["SPC"] > 0, isTRUE)
-  return(adata[idx,])
+  adata["SPCdisplay"] <- noiso_SPC["SPC"]
+  
+#  idx <- sapply(adata["SPC"] > 0, isTRUE)
+#  return(adata[idx,])
+  return(adata)
 }
 
 filter_by_HLA <- function(adata, Accession) {
@@ -95,7 +99,6 @@ SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupco
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
   nsamps <- ncol(adata) - 1
   reqcols <- colnames(adata)
-  
   # Sample grouping
   if("grouping" %in% processing_opts & numgroups > 1){
     adata <- group_samples(adata, groupmethod, groupcols)
@@ -104,11 +107,12 @@ SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupco
   }
   
   # Get proteins where SPC score > 0
-  if("SPC" %in% processing_opts){
-    adata <- filter_by_SPC(adata, accessions)
-    accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
-  }
-  else{
+  
+  adata <- filter_by_SPC(adata, accessions)
+  accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)  
+  if(!("SPC" %in% processing_opts)){
+#  }
+#  else{
     adata["SPC"] <- matrix(rep(1, nrow(adata)))
   }
   
@@ -127,15 +131,15 @@ SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupco
   }
   
   # Return data with SPC score and GS  only
-  return(adata[,c(reqcols, "SPC", "Gini", "SS", "GS")])
+  return(adata)
+  #return(adata[,c(reqcols, "SPC", "Gini", "SS", "GS")])
 }
 
 ##########  SurfaceGenie Export  ##########
 
 SG_export <- function(adata, exportvars) {
-  
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
-  reqcols <- colnames(adata)[1:(ncol(adata)-4)]
+  reqcols <- colnames(adata)[1:(ncol(adata)-5)]
 
   # Exclude HLA molecules
   if("HLA" %in% exportvars){
