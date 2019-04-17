@@ -116,7 +116,7 @@ function(input, output, session) {
    "SurfaceGenie: Genie Score (GS)",
    "UniProt Linkout")
  myChoiceValues= list(
-   "SPC", "HLA", "CD", "CSPA #e", "Gini", "SS", "GS", "UniProt Linkout")
+   "SPCdisplay", "HLA", "CD", "CSPA #e", "Gini", "SS", "GS", "UniProt Linkout")
  
  observe({
    updateCheckboxGroupInput(
