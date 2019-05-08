@@ -12,16 +12,16 @@ split_acc_iso <- function(protID) {
   return(unlist(strsplit(protID, "[-]"))[1])
 }
 
-filter_by_SPC <- function(adata, Accession) {
+get_SPC <- function(adata, Accession) {
   SPC_scores <- read.csv(file="ref/SPC.csv", header=TRUE)
   noiso <- data.frame(Accession)
   noiso_SPC <- join(noiso, SPC_scores, by="Accession", type="left", match="first")
   noiso_SPC["SPC"][is.na(noiso_SPC["SPC"])]<-0
   adata["SPC"] <- noiso_SPC["SPC"]
-  adata["SPCdisplay"] <- noiso_SPC["SPC"]
-  
-#  idx <- sapply(adata["SPC"] > 0, isTRUE)
-#  return(adata[idx,])
+  #  adata["SPCdisplay"] <- noiso_SPC["SPC"]
+  adata["noSPC"] <- matrix(rep(1, nrow(adata)))  
+  #  idx <- sapply(adata["SPC"] > 0, isTRUE)
+  #  return(adata[idx,])
   return(adata)
 }
 
@@ -43,9 +43,22 @@ get_signal_strength <- function(sdata) {
   return(log10(max(sdata)+1))
 }
 
-get_SG_score <- function(pdata, nsamps) {
+get_dissimilar_score <- function(pdata, nsamps, spctype) {
   Gmax <- 1 - 1/nsamps
-  return((pdata["Gini"]/Gmax)^2 * pdata["SPC"] * pdata["SS"])
+  if(spctype=="SPC"){
+    return((pdata["Gini"]/Gmax)^2 * pdata["SPC"] * pdata["SS"])
+  }else{
+    return((pdata["Gini"]/Gmax)^2 * pdata["noSPC"] * pdata["SS"])
+  }
+}
+
+get_similar_score <- function(pdata, nsamps, spctype) {
+  Gmax <- 1 - 1/nsamps
+  if(spctype=="SPC"){
+    return(   ( ( 1-(pdata["Gini"]/Gmax)^2))   *   pdata["SPC"]   *   pdata["SS"]  )
+  }else{
+    return(   ( ( 1-(pdata["Gini"]/Gmax)^2))   *   pdata["noSPC"]   *   pdata["SS"]  )
+  }
 }
 
 group_samples <- function(adata, groupmethod, groupcols){
@@ -108,28 +121,26 @@ SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupco
   
   # Get proteins where SPC score > 0
   
-  adata <- filter_by_SPC(adata, accessions)
-  accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)  
-  if(!("SPC" %in% processing_opts)){
-#  }
-#  else{
-    adata["SPC"] <- matrix(rep(1, nrow(adata)))
-  }
+  adata <- get_SPC(adata, accessions)
   
-  # Exclude proteins where value = 0 in sample selected for markers
-  if(!(is.null(markersample))){
-    adata <- adata[(adata[,markersample] > 0),]
-    accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
-  }
-
+  accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)  
+  
+  #  # probably move this into a loop for calc all four scores
+  #  if(!("SPC" %in% processing_opts)){
+  #    adata["SPC"] <- matrix(rep(1, nrow(adata)))
+  #  }
+  
   # Caluclate Gini coefficient and Signal Strength
+  # Calculate all four scores
   for(irow in 1:nrow(adata)){
     sdata <- adata[irow, 2:(nsamps + 1)]
     adata[irow, "Gini"] <- get_Gini_coeff(sdata, nsamps)
     adata[irow, "SS"] <- get_signal_strength(sdata)
-    adata[irow, "GS"] <- get_SG_score(adata[irow,c("SPC","Gini","SS")], nsamps)
+    adata[irow, "GS"] <- get_dissimilar_score(adata[irow,c("SPC","noSPC","Gini","SS")], nsamps, "SPC")
+    adata[irow, "eineG"] <-get_similar_score(adata[irow,c("SPC","noSPC","Gini","SS")], nsamps, "SPC")
+    adata[irow, "iGenie"] <-get_dissimilar_score(adata[irow,c("SPC","noSPC","Gini","SS")], nsamps,"noSPC")
+    adata[irow, "eineGi"] <-get_similar_score(adata[irow,c("SPC","noSPC","Gini","SS")], nsamps,"noSPC")
   }
-  
   # Return data with SPC score and GS  only
   return(adata)
   #return(adata[,c(reqcols, "SPC", "Gini", "SS", "GS")])
@@ -138,9 +149,10 @@ SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupco
 ##########  SurfaceGenie Export  ##########
 
 SG_export <- function(adata, exportvars) {
+  print(colnames(adata))
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
-  reqcols <- colnames(adata)[1:(ncol(adata)-5)]
-
+  reqcols <- colnames(adata)[1:(ncol(adata)-8)]
+  
   # Exclude HLA molecules
   if("HLA" %in% exportvars){
     adata <- filter_by_HLA(adata, accessions)
@@ -204,13 +216,13 @@ SG_dist <- function(adata) {
           text=paste("Gene Name: ", adata$geneName, "<br>Accession: ", adata$Accession, "<br>CD: ", adata$CD), 
           color=~isCD,
           colors=c("#3498db", "#c9c9d4") # blue, grey
-        ) %>%
-          layout(
-            title="<b>Genie Scores in Descending Order</b>", titlefont=ft,
-            xaxis=list(title="rank", titlefont=fa, showgrid=FALSE),
-            yaxis=list(title="Genie Score", titlefont=fa, showgrid=FALSE),
-            legend=list(x=0.7,y=0.9) # controls the location on the plot of the legend
-          )
+  ) %>%
+    layout(
+      title="<b>Genie Scores in Descending Order</b>", titlefont=ft,
+      xaxis=list(title="rank", titlefont=fa, showgrid=FALSE),
+      yaxis=list(title="Genie Score", titlefont=fa, showgrid=FALSE),
+      legend=list(x=0.7,y=0.9) # controls the location on the plot of the legend
+    )
 }
 
 SG_dist_export <- function(adata) {
