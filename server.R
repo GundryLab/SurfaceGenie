@@ -18,112 +18,92 @@ function(input, output, session) {
     df <- read.csv(input$file1$datapath, header=TRUE)
     input_size <- c(nrow(df), ncol(df))
     list(df, input_size)
-    })
+  })
   
   ##########  SurfaceGenie: Data Grouping  ##########
   
   data_output <- reactive({
     if("grouping" %in% input$processing_opts){
-        gtags <- c("Group 1", "Group 2", "Group 3", "Group 4", "Group 5")
-        groupcols <- list()
-        if(input$numgroups >= 2){
-          validate(
-            need(input$group1, "Please indicate columns in Group 1") %then%
-              need(laply(strsplit(input$group1, ",")[[1]], as.integer), 
-                   "Group 1 Error: Non-integer values have been entered.") %then%
-              need(!(grepl("1,", input$group1)), 
-                   "Group 1 Error: Column 1 should contain accession numbers and can not be grouped" ),
-            need(input$group2, "Please indicate columns in Group 2") %then%
-              need(laply(strsplit(input$group2, ",")[[1]], as.integer), 
-                   "Group 2 Error: Non-integer values have been entered.") %then%
-              need(!(grepl("1,", input$group2)), 
-                   "Group 2 Error: Column 1 should contain accession numbers and can not be grouped" )
-          )
-          groupcols[1] <- input$group1
-          groupcols[2] <- input$group2
-        }
-        if(input$numgroups >= 3){
-          validate(
-            need(input$group3, "Please indicate columns in Group 3") %then%
-              need(laply(strsplit(input$group3, ",")[[1]], as.integer), 
-                   "Group 3 Error: Non-integer values have been entered.") %then%
-              need(!(grepl("1,", input$group3)), 
-                   "Group 3 Error: Column 1 should contain accession numbers and can not be grouped" )
-          )
-          groupcols[3] <- input$group3
-        }
-        if(input$numgroups >= 4){
-          validate(
-            need(input$group4, "Please indicate columns in Group 3") %then%
-              need(laply(strsplit(input$group4, ",")[[1]], as.integer), 
-                   "Group 4 Error: Non-integer values have been entered.") %then%
-              need(!(grepl("1,", input$group4)), 
-                   "Group 4 Error: Column 1 should contain accession numbers and can not be grouped" )
-          )
-          groupcols[4] <- input$group4
-        }
-        if(input$numgroups >=5){
-          validate(
-            need(input$group5, "Please indicate columns in Group 3") %then%
+      gtags <- c("Group 1", "Group 2", "Group 3", "Group 4", "Group 5")
+      groupcols <- list()
+      if(input$numgroups >= 2){
+        validate(
+          need(input$group1, "Please indicate columns in Group 1") %then%
+            need(laply(strsplit(input$group1, ",")[[1]], as.integer), 
+                 "Group 1 Error: Non-integer values have been entered.") %then%
+            need(!(grepl("1,", input$group1)), 
+                 "Group 1 Error: Column 1 should contain accession numbers and can not be grouped" ),
+          need(input$group2, "Please indicate columns in Group 2") %then%
+            need(laply(strsplit(input$group2, ",")[[1]], as.integer), 
+                 "Group 2 Error: Non-integer values have been entered.") %then%
+            need(!(grepl("1,", input$group2)), 
+                 "Group 2 Error: Column 1 should contain accession numbers and can not be grouped" )
+        )
+        groupcols[1] <- input$group1
+        groupcols[2] <- input$group2
+      }
+      if(input$numgroups >= 3){
+        validate(
+          need(input$group3, "Please indicate columns in Group 3") %then%
+            need(laply(strsplit(input$group3, ",")[[1]], as.integer), 
+                 "Group 3 Error: Non-integer values have been entered.") %then%
+            need(!(grepl("1,", input$group3)), 
+                 "Group 3 Error: Column 1 should contain accession numbers and can not be grouped" )
+        )
+        groupcols[3] <- input$group3
+      }
+      if(input$numgroups >= 4){
+        validate(
+          need(input$group4, "Please indicate columns in Group 3") %then%
+            need(laply(strsplit(input$group4, ",")[[1]], as.integer), 
+                 "Group 4 Error: Non-integer values have been entered.") %then%
+            need(!(grepl("1,", input$group4)), 
+                 "Group 4 Error: Column 1 should contain accession numbers and can not be grouped" )
+        )
+        groupcols[4] <- input$group4
+      }
+      if(input$numgroups >=5){
+        validate(
+          need(input$group5, "Please indicate columns in Group 3") %then%
             need(laply(strsplit(input$group5, ",")[[1]], as.integer), 
                  "Group 5 Error: Non-integer values have been entered.") %then%
             need(!(grepl("1,", input$group5)), 
                  "Group 5 Error: Column 1 should contain accession numbers and can not be grouped" )
-          )
-          groupcols[5] <- input$group4
-        }
-        
-        if("smarker" %in% input$processing_opts){
-          validate(
-            need(input$markersample, "Please enter a sample name to find makers for.") %then%
-            need(input$markersample %in% colnames(data_input()[[1]]) | input$markersample %in% gtags,
-                 "Sample name should be in your input file or a group name such as 'Group 1'")
-          )
-          SurfaceGenie(data_input()[[1]], input$processing_opts, 
-                       input$groupmethod, input$numgroups, groupcols, input$markersample)
-        }
-        else {
-          SurfaceGenie(data_input()[[1]], input$processing_opts, 
-                       input$groupmethod, input$numgroups, groupcols, markersample=NULL)
-        }
+        )
+        groupcols[5] <- input$group4
+      }
+      # call this if grouped
+      SurfaceGenie(data_input()[[1]], input$processing_opts, 
+                   input$groupmethod, input$numgroups, groupcols, markersample=NULL)
+      
     }
     else{
-      if("smarker" %in% input$processing_opts){
-        validate(
-          need(input$markersample, "Please enter a sample name to find makers for.") %then%
-          need(input$markersample %in% colnames(data_input()[[1]]),
-               "Sample name should be in your input file.")
-        )
-        SurfaceGenie(data_input()[[1]], input$processing_opts, 
-                     groupmethod=NULL, numgroups=0, groupcols=NULL, input$markersample)
-      }
-      else {
-        SurfaceGenie(data_input()[[1]], input$processing_opts, 
-                     groupmethod=NULL, numgroups=0, groupcols=NULL, markersample=NULL)
-      }
+      # call this if not grouped
+      SurfaceGenie(data_input()[[1]], input$processing_opts, 
+                   groupmethod=NULL, numgroups=0, groupcols=NULL, markersample=NULL)
     }
-    })
+  })
   
   ##########  SurfaceGenie: Output Display  ##########
   
- myChoiceNames = list(
-   "SPC score (SPC)",
-   "Exclude HLA molecules",
-   "CD molecules",
-   "Number of CSPA experiments",
-   "Gini coefficient (Gini)",
-   "Signal strength (SS)",
-   "SurfaceGenie: Genie Score (GS)",
-   "UniProt Linkout")
- myChoiceValues= list(
-   "SPCdisplay", "HLA", "CD", "CSPA #e", "Gini", "SS", "GS", "UniProt Linkout")
- 
- observe({
-   updateCheckboxGroupInput(
-     session, 'export_options', choiceNames=myChoiceNames, choiceValues = myChoiceValues, 
-     selected = if (input$bar) myChoiceValues
-   )
- })
+  myChoiceNames = list(
+    "SPC score (SPC)",
+    "Exclude HLA molecules",
+    "CD molecules",
+    "Number of CSPA experiments",
+    "Gini coefficient (Gini)",
+    "Signal strength (SS)",
+    "SurfaceGenie: Genie Score (GS)",
+    "UniProt Linkout")
+  myChoiceValues= list(
+    "SPC", "HLA", "CD", "CSPA #e", "Gini", "SS", "GS", "UniProt Linkout")
+  
+  observe({
+    updateCheckboxGroupInput(
+      session, 'export_options', choiceNames=myChoiceNames, choiceValues = myChoiceValues, 
+      selected = if (input$bar) myChoiceValues
+    )
+  })
   
   # Apply export options
   data_export <- reactive({
@@ -155,7 +135,7 @@ function(input, output, session) {
     req(input$file1)
     sprintf("[ %d rows x %d columns ]", data_export()[[2]][1], data_export()[[2]][2])
   })
-
+  
   # SG: SPC histogram
   output$SG_SPC_hist <- renderPlot({
     req(input$file1)
@@ -203,7 +183,7 @@ function(input, output, session) {
     req(input$file1)
     SG_dist(data_output())
   })
-
+  
   output$SG_dist_PNGdl <- downloadHandler(
     filename = function() { 
       fname <- unlist(strsplit(as.character(input$file1), "[.]"))[1]
@@ -214,7 +194,7 @@ function(input, output, session) {
           width=5*300,
           height=4*300,
           res=300)
-#      SG_dist(data_output())
+      #      SG_dist(data_output())
       SG_dist_export(data_output())
       dev.off()
     }
@@ -254,7 +234,7 @@ function(input, output, session) {
   )
   output$csv_dlbutton <- renderUI({
     req(input$file1)
-#    downloadButton("csv_download", "Download .csv file output")
+    #    downloadButton("csv_download", "Download .csv file output")
     downloadButton("csv_download", " .csv")
   })
   
@@ -325,5 +305,5 @@ function(input, output, session) {
     req(input$file2)
     downloadButton("SPC_csv_download", "Download .csv file output")
   })
-
+  
 }
