@@ -276,6 +276,16 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
                     em(textOutput("input_size"))
                   ),
                   tabPanel(
+                    "CSV Download", 
+                    tableOutput("data_output"),
+                    conditionalPanel(
+                      condition = "output.data_output != undefined",
+                      em(textOutput("output_size"))
+                    ),
+                    br(),
+                    uiOutput("csv_dlbutton")
+                  ),
+                  tabPanel(
                     "Plots",
                     plotOutput("SG_SPC_hist"),
                     div(class="bnav",
@@ -287,16 +297,6 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
                     uiOutput("SG_dist_PNGdlbutton", class="download_this"),
                     uiOutput("SG_dist_SVGdlbutton", class="download_this")),
                     br()
-                  ),
-                  tabPanel(
-                    "CSV Download", 
-                    tableOutput("data_output"),
-                    conditionalPanel(
-                      condition = "output.data_output != undefined",
-                      em(textOutput("output_size"))
-                    ),
-                    br(),
-                    uiOutput("csv_dlbutton")
                   )
       )
     )
@@ -383,6 +383,28 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
                 frameborder = 0,
                 marginheight = 0)
   ),
+
+  ##########    References   ##########
+  
+  tabPanel(
+    "References",
+    div(
+      h4("How to reference ", span(class ="text-success", "SurfaceGenie") ),
+      p("Latest Version"),
+      p(class="text-info", style="text-indent:1.5em", "www.cellsurfer.net"),
+      p("Previous Versions"),
+      p(class="text-info", style="text-indent:1.5em", "www.cellsurfer.net")
+    ),
+    br(),
+    div(
+      h4("Papers referencing ", span(class ="text-success", "SurfaceGenie") ),
+      p("Other Cites Go Here"),
+      p(class="text-info", style="text-indent:1.5em", "www.cellsurfer.net")
+    )
+  ),
+
+  ##########    Footer   ##########
+
   div(
     br(), br(),
     tags$em(p(style="font-size:12px", "Publication Info [Gundry Lab 2018]"))
