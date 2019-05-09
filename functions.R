@@ -69,8 +69,11 @@ group_samples <- function(adata, groupmethod, groupcols){
     if(!(is.na(match("ave", groupmethod)))){
       adata[gtags[i]] = rowMeans(adata[cols])
     }
-    if(!(is.na(match("sum", groupmethod)))){
-      adata[gtags[i]] = rowSums(adata[cols])
+    if(!(is.na(match("med", groupmethod)))){
+      for(j in 1:nrows(adata)) {
+        v<-as.vector(t(adata[j,cols]))
+        adata[gtags[i]] = median(v)
+      }
     }
   }
   adata <- adata[c("Accession", gtags[1:numgroups])]

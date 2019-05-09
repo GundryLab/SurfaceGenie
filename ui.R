@@ -119,8 +119,8 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
         h5(class="text-info", "Sample Grouping"),
         selectInput("groupmethod", "Grouping method",
                     choices = c(
-                      "Average" = "ave",
-                      "Sum" = "sum"),
+                      "Mean" = "ave",
+                      "Median" = "med"),
                     selected = "ave"
         ),
         p("*Please see Sample Grouping section on the Home page for instructions 
