@@ -70,7 +70,7 @@ group_samples <- function(adata, groupmethod, groupcols){
       adata[gtags[i]] = rowMeans(adata[cols])
     }
     if(!(is.na(match("med", groupmethod)))){
-      for(j in 1:nrows(adata)) {
+      for(j in 1:nrow(adata)) {
         v<-as.vector(t(adata[j,cols]))
         adata[gtags[i]] = median(v)
       }
@@ -151,8 +151,10 @@ SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupco
 
 ##########  SurfaceGenie Export  ##########
 
-SG_export <- function(adata, exportvars) {
+SG_export <- function(adata, exportvars, scoringvars) {
   print(colnames(adata))
+  print(exportvars)
+  print(scoringvars)
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
   reqcols <- colnames(adata)[1:(ncol(adata)-8)]
   
@@ -183,7 +185,7 @@ SG_export <- function(adata, exportvars) {
   }
   
   # Return data with export options as well as dataframe size
-  return(adata[,c(reqcols, exportvars)])
+  return(adata[,c(reqcols, exportvars, scoringvars)])
 }
 
 ##########  SurfaceGenie Plots  ##########
@@ -237,6 +239,151 @@ SG_dist_export <- function(adata) {
   CD[is.na(adata[,"CD"])] <- NA
   plot(1:nrow(adata), adata[,"GS"], xlab="rank", ylab="Genie Score", 
        main="Genie Scores in Descending Order",
+       col="#C0C0C0")
+  points(1:nrow(adata), CD, pch=16, col="#3498db")
+  legend("topright", legend="CD molecules", col="#3498db", pch=16,
+         inset=0.02, box.lwd=0)
+}
+
+eineG_dist <- function(adata) {
+  accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
+  adata <- get_CD(adata, accessions)
+  adata <- get_geneName(adata, accessions)
+  adata <- adata[,c("Accession", "geneName", "eineG", "CD")]
+  adata <- adata[order(-adata$eineG),]
+  CD <- adata[,"CD"]
+  df = data.frame(CD)
+  df$CD<-as.character(df$CD)
+  df$CD[!is.na(df$CD)]<-"CD"
+  df$CD[is.na(df$CD)]<-"non-CD"
+  adata["isCD"]<-df["CD"]
+  fa<-list(family="Arial, sans-serif", size=12)
+  ft<-list(family="Arial, sans-serif", size=14, color='black')
+  plot_ly(data=adata,
+          x=~1:nrow(adata),
+          y=~eineG, 
+          type = 'scatter', 
+          mode='markers', 
+          hoverinfo = 'text', 
+          hoverlabel = list(bgcolor='white'),
+          text=paste("Gene Name: ", adata$geneName, "<br>Accession: ", adata$Accession, "<br>CD: ", adata$CD), 
+          color=~isCD,
+          colors=c("#3498db", "#c9c9d4") # blue, grey
+  ) %>%
+    layout(
+      title="<b>eineG Scores in Descending Order</b>", titlefont=ft,
+      xaxis=list(title="rank", titlefont=fa, showgrid=FALSE),
+      yaxis=list(title="eineG Score", titlefont=fa, showgrid=FALSE),
+      legend=list(x=0.7,y=0.9) # controls the location on the plot of the legend
+    )
+}
+
+eineG_dist_export <- function(adata) {
+  accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
+  adata <- get_CD(adata, accessions)
+  adata <- adata[,c("eineG", "CD")]
+  adata <- adata[order(-adata$eineG),]
+  CD <- adata[,"eineG"]
+  CD[is.na(adata[,"CD"])] <- NA
+  plot(1:nrow(adata), adata[,"eineG"], xlab="rank", ylab="eineG Score", 
+       main="eineG Scores in Descending Order",
+       col="#C0C0C0")
+  points(1:nrow(adata), CD, pch=16, col="#3498db")
+  legend("topright", legend="CD molecules", col="#3498db", pch=16,
+         inset=0.02, box.lwd=0)
+}
+
+iGenie_dist <- function(adata) {
+  accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
+  adata <- get_CD(adata, accessions)
+  adata <- get_geneName(adata, accessions)
+  adata <- adata[,c("Accession", "geneName", "iGenie", "CD")]
+  adata <- adata[order(-adata$iGenie),]
+  CD <- adata[,"CD"]
+  df = data.frame(CD)
+  df$CD<-as.character(df$CD)
+  df$CD[!is.na(df$CD)]<-"CD"
+  df$CD[is.na(df$CD)]<-"non-CD"
+  adata["isCD"]<-df["CD"]
+  fa<-list(family="Arial, sans-serif", size=12)
+  ft<-list(family="Arial, sans-serif", size=14, color='black')
+  plot_ly(data=adata,
+          x=~1:nrow(adata),
+          y=~iGenie, 
+          type = 'scatter', 
+          mode='markers', 
+          hoverinfo = 'text', 
+          hoverlabel = list(bgcolor='white'),
+          text=paste("Gene Name: ", adata$geneName, "<br>Accession: ", adata$Accession, "<br>CD: ", adata$CD), 
+          color=~isCD,
+          colors=c("#3498db", "#c9c9d4") # blue, grey
+  ) %>%
+    layout(
+      title="<b>iGenie Scores in Descending Order</b>", titlefont=ft,
+      xaxis=list(title="rank", titlefont=fa, showgrid=FALSE),
+      yaxis=list(title="iGenie Score", titlefont=fa, showgrid=FALSE),
+      legend=list(x=0.7,y=0.9) # controls the location on the plot of the legend
+    )
+}
+
+iGenie_dist_export <- function(adata) {
+  accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
+  adata <- get_CD(adata, accessions)
+  adata <- adata[,c("iGenie", "CD")]
+  adata <- adata[order(-adata$iGenie),]
+  CD <- adata[,"iGenie"]
+  CD[is.na(adata[,"CD"])] <- NA
+  plot(1:nrow(adata), adata[,"iGenie"], xlab="rank", ylab="iGenie Score", 
+       main="iGenie Scores in Descending Order",
+       col="#C0C0C0")
+  points(1:nrow(adata), CD, pch=16, col="#3498db")
+  legend("topright", legend="CD molecules", col="#3498db", pch=16,
+         inset=0.02, box.lwd=0)
+}
+
+
+eineGi_dist <- function(adata) {
+  accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
+  adata <- get_CD(adata, accessions)
+  adata <- get_geneName(adata, accessions)
+  adata <- adata[,c("Accession", "geneName", "eineGi", "CD")]
+  adata <- adata[order(-adata$eineGi),]
+  CD <- adata[,"CD"]
+  df = data.frame(CD)
+  df$CD<-as.character(df$CD)
+  df$CD[!is.na(df$CD)]<-"CD"
+  df$CD[is.na(df$CD)]<-"non-CD"
+  adata["isCD"]<-df["CD"]
+  fa<-list(family="Arial, sans-serif", size=12)
+  ft<-list(family="Arial, sans-serif", size=14, color='black')
+  plot_ly(data=adata,
+          x=~1:nrow(adata),
+          y=~eineGi, 
+          type = 'scatter', 
+          mode='markers', 
+          hoverinfo = 'text', 
+          hoverlabel = list(bgcolor='white'),
+          text=paste("Gene Name: ", adata$geneName, "<br>Accession: ", adata$Accession, "<br>CD: ", adata$CD), 
+          color=~isCD,
+          colors=c("#3498db", "#c9c9d4") # blue, grey
+  ) %>%
+    layout(
+      title="<b>eineGi Scores in Descending Order</b>", titlefont=ft,
+      xaxis=list(title="rank", titlefont=fa, showgrid=FALSE),
+      yaxis=list(title="eineGi Score", titlefont=fa, showgrid=FALSE),
+      legend=list(x=0.7,y=0.9) # controls the location on the plot of the legend
+    )
+}
+
+eineGi_dist_export <- function(adata) {
+  accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
+  adata <- get_CD(adata, accessions)
+  adata <- adata[,c("eineGi", "CD")]
+  adata <- adata[order(-adata$eineGi),]
+  CD <- adata[,"eineGi"]
+  CD[is.na(adata[,"CD"])] <- NA
+  plot(1:nrow(adata), adata[,"eineGi"], xlab="rank", ylab="eineGi Score", 
+       main="eineGi Scores in Descending Order",
        col="#C0C0C0")
   points(1:nrow(adata), CD, pch=16, col="#3498db")
   legend("topright", legend="CD molecules", col="#3498db", pch=16,

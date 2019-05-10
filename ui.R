@@ -76,36 +76,31 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
                          ".csv"),
                 buttonLabel = "Browse...", placeholder = "No file selected"),
       hr(),
-      h5(class="text-info", "Processing Options"),
-      # checkboxGroupInput(
-      #   "processing_opts", "Select processing options:",
-      #   choiceNames = list(
-      #     "Consider SPC",
-      #     "Find markers for specific sample",
-      #     "Group samples"),
-      #   choiceValues = list(
-      #     "SPC", "smarker", "grouping"),
-      #   selected = c(
-      #     "SPC")
-      # ),
-      
+
+      h5(class="text-info", "Scoring Options"),
       #### regular GS
       #### GS, no SPC = iGenie
       #### GS reversed = eineG
       #### GS reversed, no SPC = eineGi
       checkboxGroupInput(
-        "processing_opts", "Select processing options:",
+        "scoring_opts", "Select scoring methods:",
         choiceNames = list(
-          "Consider SPC",
+          "SurfaceGenie",
           "eineG",
           "iGenie",
-          "eineGi",
-#          "Find markers for specific sample",
+          "eineGi"),
+        choiceValues = list(
+          "GS", "eineG", "iGenie", "eineGi"),
+          selected = list("GS", "HLA")
+      ),
+      
+      h5(class="text-info", "Processing Options"),
+      checkboxGroupInput(
+        "processing_opts", "Select processing options:",
+        choiceNames = list(
           "Group samples"),
         choiceValues = list(
-          "SPC", "eineG", "iGenie", "eineGi", "grouping"),
-        selected = c(
-          "SPC")
+          "grouping")
       ),
       conditionalPanel(
         condition = "input.processing_opts.indexOf('smarker') > -1",
@@ -173,10 +168,11 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
           "Number of CSPA experiments",
           "Gini coefficient (Gini)",
           "Signal strength (SS)",
-          "SurfaceGenie: Genie Score (GS)",
+#          "SurfaceGenie: Genie Score (GS)",
           "UniProt Linkout"),
         choiceValues = list(
-          "SPC", "HLA", "CD", "CSPA #e", "Gini", "SS", "GS", "UniProt Linkout"),
+#          "SPC", "HLA", "CD", "CSPA #e", "Gini", "SS", "GS", "UniProt Linkout"),
+          "SPC", "HLA", "CD", "CSPA #e", "Gini", "SS", "UniProt Linkout"),
         selected = list("GS", "HLA")
       ),
       checkboxInput('bar', 'All/None')
@@ -292,10 +288,40 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
                     uiOutput("SG_SPC_hist_PNGdlbutton", class="download_this"),
                     uiOutput("SG_SPC_hist_SVGdlbutton", class="download_this")),
                     p(),
+                    br(),
+                    br(),
+                    br(),
                     plotlyOutput("SG_dist"),
                     div(class="bnav",
                     uiOutput("SG_dist_PNGdlbutton", class="download_this"),
                     uiOutput("SG_dist_SVGdlbutton", class="download_this")),
+                    p(),
+                    br(),
+                    br(),
+                    br(),
+                    #eineG
+                    plotlyOutput("eineG_dist"),
+                    div(class="bnav",
+                        uiOutput("eineG_dist_PNGdlbutton", class="download_this"),
+                        uiOutput("eineG_dist_SVGdlbutton", class="download_this")),
+                    p(),
+                    br(),
+                    br(),
+                    br(),
+                    #iGenie
+                    plotlyOutput("iGenie_dist"),
+                    div(class="bnav",
+                        uiOutput("iGenie_dist_PNGdlbutton", class="download_this"),
+                        uiOutput("iGenie_dist_SVGdlbutton", class="download_this")),
+                    p(),
+                    br(),
+                    br(),
+                    br(),
+                    #eineGi
+                    plotlyOutput("eineGi_dist"),
+                    div(class="bnav",
+                        uiOutput("eineGi_dist_PNGdlbutton", class="download_this"),
+                        uiOutput("eineGi_dist_SVGdlbutton", class="download_this")),
                     br()
                   )
       )
@@ -375,14 +401,14 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
       p("Additional cell surface-related information and tools can be found at our growing website:"),
       p(class="text-info", style="text-indent:1.5em", "www.cellsurfer.net")
     ),
-    br(),
-    tags$iframe(id = "googleform",
-                src = "https://docs.google.com/forms/d/e/1FAIpQLScRtGpbasA6zokudzm5ujmdatP1bk2AZf_eVIloN8JAftUTVQ/viewform?embedded=true",
-                width = 700,
-                height = 700,
-                frameborder = 0,
-                marginheight = 0)
-  ),
+    br()
+#    tags$iframe(id = "googleform",
+#                src = "https://docs.google.com/forms/d/e/1FAIpQLScRtGpbasA6zokudzm5ujmdatP1bk2AZf_eVIloN8JAftUTVQ/viewform?embedded=true",
+#                width = 700,
+#                height = 700,
+#                frameborder = 0,
+#                marginheight = 0)
+ ),
 
   ##########    References   ##########
   

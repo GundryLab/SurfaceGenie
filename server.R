@@ -93,21 +93,22 @@ function(input, output, session) {
     "Number of CSPA experiments",
     "Gini coefficient (Gini)",
     "Signal strength (SS)",
-    "SurfaceGenie: Genie Score (GS)",
+#    "SurfaceGenie: Genie Score (GS)",
     "UniProt Linkout")
   myChoiceValues= list(
-    "SPC", "HLA", "CD", "CSPA #e", "Gini", "SS", "GS", "UniProt Linkout")
-  
+#    "SPC", "HLA", "CD", "CSPA #e", "Gini", "SS", "GS", "UniProt Linkout")
+    "SPC", "HLA", "CD", "CSPA #e", "Gini", "SS", "UniProt Linkout")
+
   observe({
     updateCheckboxGroupInput(
       session, 'export_options', choiceNames=myChoiceNames, choiceValues = myChoiceValues, 
       selected = if (input$bar) myChoiceValues
     )
   })
-  
+
   # Apply export options
   data_export <- reactive({
-    df <- SG_export(data_output(), input$export_options)
+    df <- SG_export(data_output(), input$export_options, input$scoring_opts)
     output_size <- c(nrow(df), ncol(df))
     list(df, output_size)
   })
@@ -135,7 +136,7 @@ function(input, output, session) {
     req(input$file1)
     sprintf("[ %d rows x %d columns ]", data_export()[[2]][1], data_export()[[2]][2])
   })
-  
+
   # SG: SPC histogram
   output$SG_SPC_hist <- renderPlot({
     req(input$file1)
@@ -177,8 +178,8 @@ function(input, output, session) {
     req(input$file1)
     downloadButton("SG_SPC_hist_SVGdl", " .svg", class="download_this")
   })
-  
-  # SG: Genie Score plot
+
+    # SG: Genie Score plot
   output$SG_dist <- renderPlotly({
     req(input$file1)
     SG_dist(data_output())
@@ -221,6 +222,144 @@ function(input, output, session) {
     req(input$file1)
     downloadButton("SG_dist_SVGdl", " .svg", class="download_this")
   })
+  
+  # eineG: reverse Genie Score plot
+  output$eineG_dist <- renderPlotly({
+    req(input$file1)
+    eineG_dist(data_output())
+  })
+  
+  output$eineG_dist_PNGdl <- downloadHandler(
+    filename = function() { 
+      fname <- unlist(strsplit(as.character(input$file1), "[.]"))[1]
+      paste(fname, '_eineG_dist.png', sep='') 
+    },
+    content = function(file) {
+      png(file,
+          width=5*300,
+          height=4*300,
+          res=300)
+      #      eineG_dist(data_output())
+      eineG_dist_export(data_output())
+      dev.off()
+    }
+  )
+  output$eineG_dist_PNGdlbutton <- renderUI({
+    req(input$file1)
+    downloadButton("eineG_dist_PNGdl", " .png", class="download_this")
+  })
+  output$eineG_dist_SVGdl <- downloadHandler(
+    filename = function() { 
+      fname <- unlist(strsplit(as.character(input$file1), "[.]"))[1]
+      paste(fname, '_eineG_dist.svg', sep='') 
+    },
+    content = function(file) {
+      svg(file,
+          width=5,
+          height=4,
+          pointsize=10)
+      eineG_dist_export(data_output())
+      dev.off()
+    }
+  )
+  output$eineG_dist_SVGdlbutton <- renderUI({
+    req(input$file1)
+    downloadButton("eineG_dist_SVGdl", " .svg", class="download_this")
+  })
+
+  # iGenie: SurfaceGenie w/o SPC Score plot
+  output$iGenie_dist <- renderPlotly({
+    req(input$file1)
+    iGenie_dist(data_output())
+  })
+  
+  output$iGenie_dist_PNGdl <- downloadHandler(
+    filename = function() { 
+      fname <- unlist(strsplit(as.character(input$file1), "[.]"))[1]
+      paste(fname, '_iGenie_dist.png', sep='') 
+    },
+    content = function(file) {
+      png(file,
+          width=5*300,
+          height=4*300,
+          res=300)
+      #      iGenie_dist(data_output())
+      iGenie_dist_export(data_output())
+      dev.off()
+    }
+  )
+  output$iGenie_dist_PNGdlbutton <- renderUI({
+    req(input$file1)
+    downloadButton("iGenie_dist_PNGdl", " .png", class="download_this")
+  })
+  output$iGenie_dist_SVGdl <- downloadHandler(
+    filename = function() { 
+      fname <- unlist(strsplit(as.character(input$file1), "[.]"))[1]
+      paste(fname, '_iGenie_dist.svg', sep='') 
+    },
+    content = function(file) {
+      svg(file,
+          width=5,
+          height=4,
+          pointsize=10)
+      iGenie_dist_export(data_output())
+      dev.off()
+    }
+  )
+  output$iGenie_dist_SVGdlbutton <- renderUI({
+    req(input$file1)
+    downloadButton("iGenie_dist_SVGdl", " .svg", class="download_this")
+  })
+  
+  
+  # eineGi: Similarity w/o SPC score plot
+  output$eineGi_dist <- renderPlotly({
+    req(input$file1)
+    eineGi_dist(data_output())
+  })
+  
+  output$eineGi_dist_PNGdl <- downloadHandler(
+    filename = function() { 
+      fname <- unlist(strsplit(as.character(input$file1), "[.]"))[1]
+      paste(fname, '_eineGi_dist.png', sep='') 
+    },
+    content = function(file) {
+      png(file,
+          width=5*300,
+          height=4*300,
+          res=300)
+      #      eineGi_dist(data_output())
+      eineGi_dist_export(data_output())
+      dev.off()
+    }
+  )
+  output$eineGi_dist_PNGdlbutton <- renderUI({
+    req(input$file1)
+    downloadButton("eineGi_dist_PNGdl", " .png", class="download_this")
+  })
+  output$eineGi_dist_SVGdl <- downloadHandler(
+    filename = function() { 
+      fname <- unlist(strsplit(as.character(input$file1), "[.]"))[1]
+      paste(fname, '_eineGi_dist.svg', sep='') 
+    },
+    content = function(file) {
+      svg(file,
+          width=5,
+          height=4,
+          pointsize=10)
+      eineGi_dist_export(data_output())
+      dev.off()
+    }
+  )
+  output$eineGi_dist_SVGdlbutton <- renderUI({
+    req(input$file1)
+    downloadButton("eineGi_dist_SVGdl", " .svg", class="download_this")
+  })
+  
+  
+  
+  
+  
   
   # Downloadable csv of selected dataset
   output$csv_download <- downloadHandler(
