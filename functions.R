@@ -152,9 +152,6 @@ SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupco
 ##########  SurfaceGenie Export  ##########
 
 SG_export <- function(adata, exportvars, scoringvars) {
-  print(colnames(adata))
-  print(exportvars)
-  print(scoringvars)
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
   reqcols <- colnames(adata)[1:(ncol(adata)-8)]
   
