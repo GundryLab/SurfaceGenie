@@ -29,48 +29,49 @@ function(input, output, session) {
       if(input$numgroups >= 2){
         validate(
           need(input$group1, "Please indicate columns in Group 1") %then%
-            need(laply(strsplit(input$group1, ",")[[1]], as.integer), 
+            need(laply(strsplit(input$group1, ","), as.integer), 
                  "Group 1 Error: Non-integer values have been entered.") %then%
-            need(!(grepl("1,", input$group1)), 
+            need(!(1 %in% strsplit(input$group1,",")[[1]]),
                  "Group 1 Error: Column 1 should contain accession numbers and can not be grouped" ),
           need(input$group2, "Please indicate columns in Group 2") %then%
             need(laply(strsplit(input$group2, ",")[[1]], as.integer), 
                  "Group 2 Error: Non-integer values have been entered.") %then%
-            need(!(grepl("1,", input$group2)), 
+            need(!(1 %in% strsplit(input$group2,",")[[1]]),
                  "Group 2 Error: Column 1 should contain accession numbers and can not be grouped" )
         )
         groupcols[1] <- input$group1
         groupcols[2] <- input$group2
       }
       if(input$numgroups >= 3){
+        print(input$group3)
         validate(
           need(input$group3, "Please indicate columns in Group 3") %then%
             need(laply(strsplit(input$group3, ",")[[1]], as.integer), 
                  "Group 3 Error: Non-integer values have been entered.") %then%
-            need(!(grepl("1,", input$group3)), 
+            need(!(1 %in% strsplit(input$group3,",")[[1]]),
                  "Group 3 Error: Column 1 should contain accession numbers and can not be grouped" )
         )
         groupcols[3] <- input$group3
       }
       if(input$numgroups >= 4){
         validate(
-          need(input$group4, "Please indicate columns in Group 3") %then%
+          need(input$group4, "Please indicate columns in Group 4") %then%
             need(laply(strsplit(input$group4, ",")[[1]], as.integer), 
                  "Group 4 Error: Non-integer values have been entered.") %then%
-            need(!(grepl("1,", input$group4)), 
+            need(!(1 %in% strsplit(input$group4,",")[[1]]),
                  "Group 4 Error: Column 1 should contain accession numbers and can not be grouped" )
         )
         groupcols[4] <- input$group4
       }
       if(input$numgroups >=5){
         validate(
-          need(input$group5, "Please indicate columns in Group 3") %then%
+          need(input$group5, "Please indicate columns in Group 5") %then%
             need(laply(strsplit(input$group5, ",")[[1]], as.integer), 
                  "Group 5 Error: Non-integer values have been entered.") %then%
-            need(!(grepl("1,", input$group5)), 
+            need(!(1 %in% strsplit(input$group5,",")[[1]]),
                  "Group 5 Error: Column 1 should contain accession numbers and can not be grouped" )
         )
-        groupcols[5] <- input$group4
+        groupcols[5] <- input$group5
       }
       # call this if grouped
       SurfaceGenie(data_input()[[1]], input$processing_opts, 

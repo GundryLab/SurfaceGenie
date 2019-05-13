@@ -91,7 +91,7 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
           "eineGi"),
         choiceValues = list(
           "GS", "eineG", "iGenie", "eineGi"),
-          selected = list("GS", "HLA")
+          selected = list("GS")
       ),
       
       h5(class="text-info", "Processing Options"),
