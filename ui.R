@@ -75,7 +75,7 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
                          "text/comma-separated-values,text/plain",
                          ".csv"),
                 buttonLabel = "Browse...", placeholder = "No file selected"),
-      hr(),
+#      hr(),
 
       h5(class="text-info", "Scoring Options"),
       #### regular GS
@@ -83,7 +83,8 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
       #### GS reversed = eineG
       #### GS reversed, no SPC = eineGi
       checkboxGroupInput(
-        "scoring_opts", "Select scoring methods:",
+#        "scoring_opts", "Select scoring methods:",
+        "scoring_opts", NULL,
         choiceNames = list(
           "SurfaceGenie",
           "eineG",
@@ -93,9 +94,11 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
           "GS", "eineG", "iGenie", "eineGi"),
           selected = list("GS")
       ),
-      
+
+      hr(),
+      h5(class="text-info", "Species"),
       radioButtons(
-        "species", "Put your text here:",
+        "species", NULL,
         choices = list(
           "human",
           "rat",
@@ -104,10 +107,12 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
         #        choiceNames = NULL,
         #        choiceValues = NULL
       ),      
-      
-      h5(class="text-info", "Processing Options"),
+
+      hr(),
+      h5(class="text-info", "Processing Option"),
       checkboxGroupInput(
-        "processing_opts", "Select processing options:",
+#        "processing_opts", "Select processing options:",
+        "processing_opts", NULL,
         choiceNames = list(
           "Group samples"),
         choiceValues = list(
@@ -168,10 +173,12 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
           textInput("group10", "Group 10", placeholder="Columns in Group 10")
         )
       ),
+
       hr(),
       h5(class="text-info", "Export Options (for CSV Download Tab)"),
       checkboxGroupInput(
-        'export_options', "Choose variables to export:",
+#        'export_options', "Choose variables to export:",
+        'export_options', NULL,
         choiceNames = list(
           "SPC score (SPC)",
           "Exclude HLA molecules",
@@ -438,12 +445,12 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
       p("Other Cites Go Here"),
       p(class="text-info", style="text-indent:1.5em", "www.cellsurfer.net")
     )
-  ),
+  )
 
   ##########    Footer   ##########
 
-  div(
-    br(), br(),
-    tags$em(p(style="font-size:12px", "Publication Info [Gundry Lab 2018]"))
-  )
+#  div(
+#    br(), br(),
+#    tags$em(p(style="font-size:12px", "Publication Info [Gundry Lab 2018]"))
+# )
 ))

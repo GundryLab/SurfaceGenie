@@ -43,7 +43,6 @@ function(input, output, session) {
         groupcols[2] <- input$group2
       }
       if(input$numgroups >= 3){
-        print(input$group3)
         validate(
           need(input$group3, "Please indicate columns in Group 3") %then%
             need(laply(strsplit(input$group3, ",")[[1]], as.integer), 
@@ -80,7 +79,6 @@ function(input, output, session) {
     }
     else{
       # call this if not grouped
-      print(input$species)
       SurfaceGenie(data_input()[[1]], input$processing_opts, 
                    groupmethod=NULL, numgroups=0, groupcols=NULL, input$species)
     }
