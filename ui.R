@@ -94,6 +94,17 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
           selected = list("GS")
       ),
       
+      radioButtons(
+        "species", "Put your text here:",
+        choices = list(
+          "human",
+          "rat",
+          "mouse"),
+        selected = list("human")
+        #        choiceNames = NULL,
+        #        choiceValues = NULL
+      ),      
+      
       h5(class="text-info", "Processing Options"),
       checkboxGroupInput(
         "processing_opts", "Select processing options:",

@@ -75,13 +75,14 @@ function(input, output, session) {
       }
       # call this if grouped
       SurfaceGenie(data_input()[[1]], input$processing_opts, 
-                   input$groupmethod, input$numgroups, groupcols, markersample=NULL)
+                   input$groupmethod, input$numgroups, groupcols, input$species)
       
     }
     else{
       # call this if not grouped
+      print(input$species)
       SurfaceGenie(data_input()[[1]], input$processing_opts, 
-                   groupmethod=NULL, numgroups=0, groupcols=NULL, markersample=NULL)
+                   groupmethod=NULL, numgroups=0, groupcols=NULL, input$species)
     }
   })
   
@@ -109,7 +110,7 @@ function(input, output, session) {
 
   # Apply export options
   data_export <- reactive({
-    df <- SG_export(data_output(), input$export_options, input$scoring_opts)
+    df <- SG_export(data_output(), input$export_options, input$scoring_opts, input$species)
     output_size <- c(nrow(df), ncol(df))
     list(df, output_size)
   })
