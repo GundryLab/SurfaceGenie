@@ -11,34 +11,21 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
     div(
      h4("Welcome to ", span(class ="text-success", "SurfaceGenie"),"!"),
      p(tags$i("Integrating predictive and empirical data for rational marker prioritization")),
-     p("SurfaceGenie is a tool for analyzing proteomic datasets to identify proteins of 
-       interest for immunophenotyping, immunotherapy, drug targeting, and other applications. 
-       It works by prioritizing the likelihood that a protein is informative for distinguishing 
-       among sample groups (i.e. cell types, experimental conditions). SurfaceGenie generates a 
-       score for each protein based on how likely it will be found on the cell surface, the 
-       number of samples it is observed in within a comparison set, and the magnitude of the 
-       measurement variable (i.e. relative abundance). While a major benefit of SurfaceGenie 
-       is the ability to prioritize molecules that are localized to the cell surface, it is 
-       also possible to analyze data without this parameter to find proteins of interest that 
-       reside in other subcellular localizations. SurfaceGenie works well with approaches that 
-       specifically identify cell surface proteins (e.g. Cell Surface Capture) and more generic 
-       approaches (e.g. analyses of whole cell lysate). The SurfaceGenie score is context-dependent, 
-       meaning that the tool will consider all data within a single dataset input (which may 
-       contain multiple experiments and/or cell types). If a user performs a comparison and 
-       subsequently determines additional data should be considered, a new file containing 
-       all data for the new comparison is required.")
-     ),
-     p("If you use SurfaceGenie in your research, please cite the article:"),
-     p("{ADD Reference and PUBMED LINK HERE}"),
+     p("SurfaceGenie is a web app for analyzing omic datasets (e.g. proteomic, transcriptomic) to prioritize candidate cell-type specific markers of interest for immunophenotyping, immunotherapy, drug targeting, and other applications. It works by calculating the likelihood a molecule is informative for distinguishing among sample groups (e.g. cell types, experimental conditions). While a major benefit of SurfaceGenie is the ability to prioritize proteins that are localized to the cell surface, it is also possible to analyze data without this parameter to find proteins of interest that reside in other subcellular localizations. See the descriptions for each of the four permutations of the scoring algorithm."),
+     p("SurfaceGenie works well with quantitative proteomic and transcriptomic datasets, but others are also possible (see below). All calculations performed within SurfaceGenie are context-dependent, meaning that the tools will consider all data within a single dataset input (which may contain multiple experiments and/or cell types). If a user performs a comparison and subsequently determines additional data should be considered, a new file containing all data for the new comparison is required."),
+     br(),
+     tags$b("Scoring Permutations"),
+     tags$img(src="scoringgrid.png", width="330px", align="right"),
+     p( tags$i("GenieScore: "), "Use to prioritize ", tags$b("surface proteins"), "that have ", tags$b("disparate"), " levels of abundance/expression."),
+     p( tags$i("IsoGenieScore: "), "Use to prioritize ", tags$b("surface proteins"), "that have ", tags$b("similar, high"), " levels of abundance/expression."),
+     p( tags$i("OmniGenieScore: "), "Use to prioritize ", tags$b("any molecules"), " (genes/proteins) that have ", tags$b("disparate"), " levels of abundance/expression."),
+     p( tags$i("IsoOmniGenieScore: "), "Use to prioritize ", tags$b("any molecules"), " (genes/proteins) that have ", tags$b("similar, high"), " levels of abundance/expression.")
+    ),
     br(),
     div(
-     h4("SurfaceGenie Web Tools"),
-     h5(class="text-info", "SurfaceGenie"),
-     p(tags$i("Input:  ")),
-     p(style="margin-left:1.5em", "SurfaceGenie accepts a .csv file containing a list of proteins 
-       (UniProt Accession) and a surrogate value representative of abundance (e.g. number of 
-       peptide spectrum matches, peak area) identified within a set of samples. There is no limit 
-       to the number of samples that can be analyzed in a single file."),
+      tags$b("Overview of Inputs and Outputs"),
+      p(tags$i("Input:  ")),
+     p(style="margin-left:1.5em", "SurfaceGenie accepts a .csv file containing a list of proteins (UniProt Accession) and a surrogate value representative of abundance (e.g. number of peptide spectrum matches, peak area, FKPM, RKPM) identified within a set of samples. There is no limit to the number of samples that can be analyzed in a single file. SurfaceGenie has SPC datasets for human, mouse, and rat."),
      p(tags$i("Data Processing:  ")),
      p(style="margin-left:1.5em", "SurfaceGenie calculates the dot product of three independent scores:"),
      tags$ol(
@@ -56,11 +43,22 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
                abundance will practically serve as more accessible markers for downstream technologies. 
                Scores typically range 0 ~ 4 .")
      ),
+     p(tags$i("Output:  ")),
+     tags$ul(
+       tags$li(tags$u("CSV Download"), br(), "Columns of selected data types (e.g. SPC score, CD molecule annotation, etc) are appended to each entry in the original input file"),
+       tags$li(tags$u("Plots"), br(), "Scores from each of the 4 permutations are plotted in order of priority for all proteins within a dataset"),
+       tags$li(tags$u("SPC Histogram"), br(), "Displays the distribution of SPC scores")
+     ), 
+     br(),
      h5(class="text-info", "SPC Score Lookup"),
      p("This feature enables users to obtain Surface Protein Consensus (SPC) score for proteins 
        of interest without analyzing data through SurfaceGenie. Users may perform a batch retrieval 
        by uploading a .csv file containing UniProt Accession numbers or may search individual 
-       UniProt accession numbers.")
+       UniProt accession numbers."),
+     br(),
+     h5(class="text-info", "Other Applications"),
+     p("Although the calculation of SPC score depends on the use of Uniprot Accession IDs (for human, mouse, or rat), the other terms used here are agnostic to the type and distribution of data. Therefore, the OmniGenieScore and IsoOmniGenieScore can be used for any type of quantitative data for which there is a desire to find measurements that are either unique or similar between all samples. This could include metabolomic data, glycomics data, or strain counts for microbiome studies.")
+     
     )
   ),
   
@@ -434,16 +432,25 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
     "References",
     div(
       h4("How to reference ", span(class ="text-success", "SurfaceGenie") ),
-      p("Latest Version"),
-      p(class="text-info", style="text-indent:1.5em", "www.cellsurfer.net"),
-      p("Previous Versions"),
-      p(class="text-info", style="text-indent:1.5em", "www.cellsurfer.net")
+      p("If you use any of the SurfaceGenie tools in your work, please cite the original manuscript:"),
+      p("Waas M, Snarrenberg ST, Littrell J, Jones Lipinski RA, Hansen PA, Corbett JA, Gundry RL, SurfaceGenie: 
+        A web-based application for integrating predictive and experimental data for rational candidate surface 
+        protein marker prioritization,", tags$a(href="https://doi.org/10.1101/575969", "https://doi.org/10.1101/575969"))
     ),
     br(),
     div(
-      h4("Papers referencing ", span(class ="text-success", "SurfaceGenie") ),
-      p("Other Cites Go Here"),
-      p(class="text-info", style="text-indent:1.5em", "www.cellsurfer.net")
+      h4("Publications that cite ", span(class ="text-success", "SurfaceGenie") ),
+      p("Coming Soon!")
+    ),
+    br(),
+    div(
+      h4("Publications that support the ", span(class ="text-success", "SPC Score") ),
+      tags$ol(
+        tags$li( "Bausch-Fluck D, et al. (2018) The in silico human surfaceome. Proc Natl Acad Sci U S A 115(46):E10988-E10997."),
+        tags$li( "da Cunha JP, et al. (2009) Bioinformatics construction of the human cell surfaceome. Proc Natl Acad Sci U S A 106(39):16752-16757"),
+        tags$li( "Town J, et al. (2016) Exploring the surfaceome of Ewing sarcoma identifies a new and unique therapeutic target. Proc Natl Acad Sci U S A 113(13):3603-3608" ),
+        tags$li( "Diaz-Ramos MC, Engel P, & Bastos R (2011) Towards a comprehensive human cell-surface immunome database. Immunol Lett 134(2):183-187.")
+      )
     )
   )
 
