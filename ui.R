@@ -89,9 +89,9 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
         "scoring_opts", NULL,
         choiceNames = list(
           "SurfaceGenie",
-          "eineG",
-          "iGenie",
-          "eineGi"),
+          "IsoGenie",
+          "OmniGenie",
+          "IsoOmniGenie"),
         choiceValues = list(
           "GS", "eineG", "iGenie", "eineGi"),
           selected = list("GS")
@@ -179,24 +179,39 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
       hr(),
       h5(class="text-info", "Export Options (for CSV Download Tab)"),
       checkboxGroupInput(
-#        'export_options', "Choose variables to export:",
-        'export_options', NULL,
+        'export_options1', "SurfaceGenie Components:",
+#        'export_options', NULL,
         choiceNames = list(
           "SPC score (SPC)",
-          "Exclude HLA molecules",
-          "CD molecules",
-          "Number of CSPA experiments",
           "Gini coefficient (Gini)",
-          "Signal strength (SS)",
+          "Signal strength (SS)"
+        ),
+#          "Exclude HLA molecules",
+#          "CD molecules",
+#          "Number of CSPA experiments",
+#          "Gini coefficient (Gini)",
+#          "Signal strength (SS)",
 #          "SurfaceGenie: Genie Score (GS)",
-          "UniProt Linkout"),
+#          "UniProt Linkout"),
         choiceValues = list(
 #          "SPC", "HLA", "CD", "CSPA #e", "Gini", "SS", "GS", "UniProt Linkout"),
-          "SPC", "HLA", "CD", "CSPA #e", "Gini", "SS", "UniProt Linkout"),
-        selected = list("GS", "HLA")
+#          "SPC", "HLA", "CD", "CSPA #e", "Gini", "SS", "UniProt Linkout"),
+          "SPC", "Gini", "SS"),
+        selected = list("GS")
       ),
-      checkboxInput('bar', 'All/None')
-    ),
+#      checkboxInput('bar', 'All/None')
+      checkboxGroupInput(
+        'export_options2', "Annotations / Link outs:",
+        choiceNames = list(
+             "Exclude HLA molecules",
+             "CD molecules",
+             "Number of CSPA experiments",
+             "UniProt Linkout"),
+        choiceValues = list(
+          "HLA", "CD", "CSPA #e", "UniProt Linkout"),
+        selected = list("HLA")
+  )
+),
     
     mainPanel(
       tabsetPanel(type = "tabs",

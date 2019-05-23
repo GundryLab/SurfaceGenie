@@ -86,29 +86,33 @@ function(input, output, session) {
   
   ##########  SurfaceGenie: Output Display  ##########
   
-  myChoiceNames = list(
-    "SPC score (SPC)",
-    "Exclude HLA molecules",
-    "CD molecules",
-    "Number of CSPA experiments",
-    "Gini coefficient (Gini)",
-    "Signal strength (SS)",
-#    "SurfaceGenie: Genie Score (GS)",
-    "UniProt Linkout")
-  myChoiceValues= list(
-#    "SPC", "HLA", "CD", "CSPA #e", "Gini", "SS", "GS", "UniProt Linkout")
-    "SPC", "HLA", "CD", "CSPA #e", "Gini", "SS", "UniProt Linkout")
-
-  observe({
-    updateCheckboxGroupInput(
-      session, 'export_options', choiceNames=myChoiceNames, choiceValues = myChoiceValues, 
-      selected = if (input$bar) myChoiceValues
-    )
-  })
+#  myChoiceNames = list(
+#    "SPC score (SPC)",
+#    "Exclude HLA molecules",
+#    "CD molecules",
+#    "Number of CSPA experiments",
+#    "Gini coefficient (Gini)",
+#    "Signal strength (SS)",
+##    "SurfaceGenie: Genie Score (GS)",
+#    "UniProt Linkout")
+#  myChoiceValues= list(
+##    "SPC", "HLA", "CD", "CSPA #e", "Gini", "SS", "GS", "UniProt Linkout")
+#    "SPC", "HLA", "CD", "CSPA #e", "Gini", "SS", "UniProt Linkout")
+#
+#  observe({
+#    updateCheckboxGroupInput(
+#      session, 'export_options', choiceNames=myChoiceNames, choiceValues = myChoiceValues, 
+#      selected = if (input$bar) myChoiceValues
+#    )
+#  })
 
   # Apply export options
   data_export <- reactive({
-    df <- SG_export(data_output(), input$export_options, input$scoring_opts, input$species)
+    df <- SG_export(data_output(), input$export_options1, input$export_options2, input$scoring_opts, input$species)
+    names(df)[names(df) == "eineG"] <- "IsoGenie"
+    names(df)[names(df) == "iGenie"] <- "OmniGenie"
+    names(df)[names(df) == "eineGi"] <- "IsoOmniGenie"
+    
     output_size <- c(nrow(df), ncol(df))
     list(df, output_size)
   })

@@ -94,7 +94,7 @@ append_UPL <- function(adata, Accession){
 
 get_CD <- function(adata, Accession, species) {
   if(species=="human") {
-    CD <- read.csv("ref/CD.csv", header=TRUE)
+    CD <- read.csv("ref/Human_CD.csv", header=TRUE)
   } else if (species=="rat") {
     CD <- read.csv("ref/Rat_CD.csv", header=TRUE)
   } else if (species=="mouse") {
@@ -169,23 +169,23 @@ SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupco
 
 ##########  SurfaceGenie Export  ##########
 
-SG_export <- function(adata, exportvars, scoringvars, species) {
+SG_export <- function(adata, exportvars1, exportvars2 , scoringvars, species) {
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
   reqcols <- colnames(adata)[1:(ncol(adata)-10)]
   
   # Exclude HLA molecules
-  if("HLA" %in% exportvars){
+  if("HLA" %in% exportvars2){
     adata <- filter_by_HLA(adata, accessions)
     accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
     #need to remove HLA from exportvars because the other vars concern the number
     #of columns whereas HLA is the rows.  At the end of this function, the exportvars
     #gets passed and can't have any variables that concern rows.
     ev<-c("HLA")
-    exportvars <- exportvars[!exportvars %in% ev]
+    exportvars2 <- exportvars2[!exportvars2 %in% ev]
   }
   
   # Export option: append uniprot linkout column
-  if("UniProt Linkout" %in% exportvars){
+  if("UniProt Linkout" %in% exportvars2){
     adata <- append_UPL(adata, accessions)
   }
   
@@ -201,12 +201,12 @@ SG_export <- function(adata, exportvars, scoringvars, species) {
 #  }
   
   # Export option: append # CSPA experiments
-  if("CSPA #e" %in% exportvars){
+  if("CSPA #e" %in% exportvars2){
     adata <- get_numCSPA(adata, accessions)
   }
   
   # Return data with export options as well as dataframe size
-  return(adata[,c(reqcols, exportvars, scoringvars)])
+  return(adata[,c(reqcols, exportvars1, exportvars2, scoringvars)])
 }
 
 ##########  SurfaceGenie Plots  ##########
@@ -292,9 +292,9 @@ eineG_dist <- function(adata) {
           colors=c("#3498db", "#c9c9d4") # blue, grey
   ) %>%
     layout(
-      title="<b>eineG Scores in Descending Order</b>", titlefont=ft,
+      title="<b>IsoGenie Scores in Descending Order</b>", titlefont=ft,
       xaxis=list(title="rank", titlefont=fa, showgrid=FALSE),
-      yaxis=list(title="eineG Score", titlefont=fa, showgrid=FALSE),
+      yaxis=list(title="IsoGenie Score", titlefont=fa, showgrid=FALSE),
       legend=list(x=0.7,y=0.9) # controls the location on the plot of the legend
     )
 }
@@ -306,8 +306,8 @@ eineG_dist_export <- function(adata) {
   adata <- adata[order(-adata$eineG),]
   CD <- adata[,"eineG"]
   CD[is.na(adata[,"CD"])] <- NA
-  plot(1:nrow(adata), adata[,"eineG"], xlab="rank", ylab="eineG Score", 
-       main="eineG Scores in Descending Order",
+  plot(1:nrow(adata), adata[,"eineG"], xlab="rank", ylab="IsoGenie Score", 
+       main="IsoGenie Scores in Descending Order",
        col="#C0C0C0")
   points(1:nrow(adata), CD, pch=16, col="#3498db")
   legend("topright", legend="CD molecules", col="#3498db", pch=16,
@@ -340,9 +340,9 @@ iGenie_dist <- function(adata) {
           colors=c("#3498db", "#c9c9d4") # blue, grey
   ) %>%
     layout(
-      title="<b>iGenie Scores in Descending Order</b>", titlefont=ft,
+      title="<b>OmniGenie Scores in Descending Order</b>", titlefont=ft,
       xaxis=list(title="rank", titlefont=fa, showgrid=FALSE),
-      yaxis=list(title="iGenie Score", titlefont=fa, showgrid=FALSE),
+      yaxis=list(title="OmniGenie Score", titlefont=fa, showgrid=FALSE),
       legend=list(x=0.7,y=0.9) # controls the location on the plot of the legend
     )
 }
@@ -354,8 +354,8 @@ iGenie_dist_export <- function(adata) {
   adata <- adata[order(-adata$iGenie),]
   CD <- adata[,"iGenie"]
   CD[is.na(adata[,"CD"])] <- NA
-  plot(1:nrow(adata), adata[,"iGenie"], xlab="rank", ylab="iGenie Score", 
-       main="iGenie Scores in Descending Order",
+  plot(1:nrow(adata), adata[,"iGenie"], xlab="rank", ylab="OmniGenie Score", 
+       main="OmniGenie Scores in Descending Order",
        col="#C0C0C0")
   points(1:nrow(adata), CD, pch=16, col="#3498db")
   legend("topright", legend="CD molecules", col="#3498db", pch=16,
@@ -389,9 +389,9 @@ eineGi_dist <- function(adata) {
           colors=c("#3498db", "#c9c9d4") # blue, grey
   ) %>%
     layout(
-      title="<b>eineGi Scores in Descending Order</b>", titlefont=ft,
+      title="<b>IsoOmniGenie Scores in Descending Order</b>", titlefont=ft,
       xaxis=list(title="rank", titlefont=fa, showgrid=FALSE),
-      yaxis=list(title="eineGi Score", titlefont=fa, showgrid=FALSE),
+      yaxis=list(title="IsoOmniGenie Score", titlefont=fa, showgrid=FALSE),
       legend=list(x=0.7,y=0.9) # controls the location on the plot of the legend
     )
 }
@@ -403,8 +403,8 @@ eineGi_dist_export <- function(adata) {
   adata <- adata[order(-adata$eineGi),]
   CD <- adata[,"eineGi"]
   CD[is.na(adata[,"CD"])] <- NA
-  plot(1:nrow(adata), adata[,"eineGi"], xlab="rank", ylab="eineGi Score", 
-       main="eineGi Scores in Descending Order",
+  plot(1:nrow(adata), adata[,"eineGi"], xlab="rank", ylab="IsoOmns Score", 
+       main="IsoOmniGenie Scores in Descending Order",
        col="#C0C0C0")
   points(1:nrow(adata), CD, pch=16, col="#3498db")
   legend("topright", legend="CD molecules", col="#3498db", pch=16,
