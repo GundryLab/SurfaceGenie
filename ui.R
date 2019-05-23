@@ -11,8 +11,12 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
     div(
      h4("Welcome to ", span(class ="text-success", "SurfaceGenie"),"!"),
      p(tags$i("Integrating predictive and empirical data for rational marker prioritization")),
+     tags$table(width="100%",
+       tags$tr(
+     tags$img(src="SGsmall.png", width="330px", align="left"),
      p("SurfaceGenie is a web app for analyzing omic datasets (e.g. proteomic, transcriptomic) to prioritize candidate cell-type specific markers of interest for immunophenotyping, immunotherapy, drug targeting, and other applications. It works by calculating the likelihood a molecule is informative for distinguishing among sample groups (e.g. cell types, experimental conditions). While a major benefit of SurfaceGenie is the ability to prioritize proteins that are localized to the cell surface, it is also possible to analyze data without this parameter to find proteins of interest that reside in other subcellular localizations. See the descriptions for each of the four permutations of the scoring algorithm."),
-     p("SurfaceGenie works well with quantitative proteomic and transcriptomic datasets, but others are also possible (see below). All calculations performed within SurfaceGenie are context-dependent, meaning that the tools will consider all data within a single dataset input (which may contain multiple experiments and/or cell types). If a user performs a comparison and subsequently determines additional data should be considered, a new file containing all data for the new comparison is required."),
+     p("SurfaceGenie works well with quantitative proteomic and transcriptomic datasets, but others are also possible (see below). All calculations performed within SurfaceGenie are context-dependent, meaning that the tools will consider all data within a single dataset input (which may contain multiple experiments and/or cell types). If a user performs a comparison and subsequently determines additional data should be considered, a new file containing all data for the new comparison is required.")
+     )),
      br(),
      tags$b("Scoring Permutations"),
      tags$img(src="scoringgrid.png", width="330px", align="right"),
@@ -204,14 +208,14 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
                       p("A .csv file containing a list of proteins (UniProt Accession) and a surrogate value 
                         representative of abundance (e.g. number of peptide spectrum matches, peak area) 
                         identified within a set of samples. "),
-                      p("The first column of your data file must be labeled 'Accession' with no extra characters 
+                      p("The first column of your data file ", tags$b("must be labeled 'Accession'"), " with no extra characters 
                         (e.g. not 'Accession #'). This column should contain the UniProt accession numbers of the 
                         proteins in your samples. You may include isoforms. To convert from a different protein ID 
                         type to UniProt, bulk conversion is available ", a(href="https://www.uniprot.org/uploadlists/", "here"), 
                         ". Under 'Select options', select your ID type in the 'From' field and then 'UniProt KB'
                         in the 'To' field."
                       ),
-                      p("Additionally, data files must be in csv format. If you are working in Excel, click 
+                      p("Importantly, data files ", tags$b("must be in .csv format"), ". If you are working in Excel, click 
                         'File --> Save As' and select csv in the drop-down menu to convert from .xlsx to .csv."),
                       h5(class="text-info", "Example Data"),
                       tableOutput("example_data"),
@@ -219,28 +223,11 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
                       ),
                     div(
                       h4("Data Proccessing Options"),
-                      h5(class="text-info", "Surface Protein Concensus (SPC) Score Consideration"),
-                      p("If you are interested in finding cell surface markers, you will want to consider SPC score 
-                        when calculating the Genie Score. This is the default setting. If you wish to ignore the SPC 
-                        score for your proteins when generating Genie Scores, you may uncheck this option and the SPC 
-                        score will be set to 1 for all proteins and will not be weighed into the Genie Score. You can 
-                        confirm this in the 'CSV' tab and then uncheck 'SPC' in the export options to remove this from 
-                        the download file. This is a feature designed to enable identification of molecules that may 
-                        differ among cell types but that may be localized inside the cell."),
-                      h5(class="text-info", "HLA Molecule Exclusion"),
-                      p("Human leukocyte antigen (HLA) molecules are typically found on the cell surface of most cell 
-                        types and due to high sequence similarity among these proteins (e.g. HLA-A3 vs. HLA-A30), it 
-                        is often challenging to be certain of the specific gene product based solely on peptide-level 
-                        evidence. As a result, it may be useful to exclude these from consideration when attempting to 
-                        identify cell surface makers for a specific cell type."),
-                      h5(class="text-info", "Find Markers for a Specific Sample"),
-                      p("If you are interested in identifying markers that are present in a specific sample (e.g. 
-                        positive selection marker for a cell type or experimental condition), SurfaceGenie can exclude 
-                        proteins that are not observed in that sample. To do this, select the option “Find markers for 
-                        specific sample”. A text box will then appear. In the text box, enter sample name of interest 
-                        and make sure it exactly matches what is contained in the file header (i.e. 'd00' for the example 
-                        dataset). If you have also selected to have SurfaceGenie group your samples (see 'Sample Grouping 
-                        below') then you may also indicate a group (i.e. 'Group 1')."),
+                      p( tags$i("GenieScore: "), "Use to prioritize ", tags$b("surface proteins"), "that have ", tags$b("disparate"), " levels of abundance/expression."),
+                      p( tags$i("IsoGenieScore: "), "Use to prioritize ", tags$b("surface proteins"), "that have ", tags$b("similar, high"), " levels of abundance/expression."),
+                      p( tags$i("OmniGenieScore: "), "Use to prioritize ", tags$b("any molecules"), " (genes/proteins) that have ", tags$b("disparate"), " levels of abundance/expression."),
+                      p( tags$i("IsoOmniGenieScore: "), "Use to prioritize ", tags$b("any molecules"), " (genes/proteins) that have ", tags$b("similar, high"), " levels of abundance/expression."),
+                      
                       h5(class="text-info", "Sample Grouping"),
                       p("Ideally, similar samples such as technical replicates or biological replicates will have
                         values averaged or summed together into a single column. However,
@@ -255,31 +242,33 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
                       ),
                     div(
                       h4("Data Export Options"),
-                      h5(class="text-info", "Plots"),
-                      p("Several visualizations are made available by SurfaceGenie:"),
-                      tags$ul(
-                        tags$li("SurfaceGenie Plot: SurfaceGenie scores plotted in order of priority for all proteins in a dataset."),
-                        tags$li("SPC Histogram: Shows the distribution of SPC scores."),
-                        tags$li("Clustered Heatmap: Visualize the relationship among samples within a dataset based on the relative 
-                                abundance measurement contained in the .csv file."),
-                        tags$li("Distribution Score: Shows the distribution of Genie Scores.")
-                      ),
                       h5(class="text-info", "CSV File"),
                       p("You may select data to export as columns appended to the right of your original data. 
                         The following variables are available for export:"),
+                      p("GenieScore Components:"),
                       tags$ul(
-                        tags$li("Surface Protein Concensus score (SPC): A predictive measure of the likelihood that a 
+                        tags$li(tags$u("Surface Protein Concensus score (SPC)") ,": A predictive measure of the likelihood that a 
                                 particular protein can be present at the cell surface."),
-                        tags$li("Distribution Score (Gini): A measure of the distribution of the protein amongst samples. 
+                        tags$li(tags$u("Distribution Score (Gini)"), ": A measure of the distribution of the protein amongst samples. 
                                 A higher value corresponds to a more localized distribution.",
                                 a(href="https://en.wikipedia.org/wiki/Gini_coefficient", "Wikipedia - Gini coefficient")),
-                        tags$li("Signal strength (SS): A weighted value of the maximum value reported among samples for the protein"),
-                        tags$li("Genie Score (GS): SurfaceGenie's measure for the value of a protein as a potential 
-                                marker of interest."),
-                        tags$li("CD molecules (CD): Cluster of differentiation (CD) molecules."),
-                        tags$li("Number of CSPA experiments (CSPA-NE): ---"),
-                        tags$li("UniProt Linkout: Link to the UniProt for information on the protein.")
-                        )
+                        tags$li(tags$u("Signal strength (SS)"), ": A weighted value of the maximum value reported among samples for the protein"),
+                        tags$li(tags$u("Genie Score (GS)"), ": SurfaceGenie's measure for the value of a protein as a potential 
+                                marker of interest.")
+                      ),
+                      p("Annotations/Linkouts:"),
+                      tags$ul(
+                        tags$li(tags$u("CD molecules (CD)"), ": Cluster of differentiation (CD) molecules are annotated with CD nomenclature. CD molecules have validated antibodies against them and therefore are attractive candidate markers for immunodetection -based applications."),
+                        tags$li(tags$u("HLA molecules (HLA)"), "Human leukocyte antigen (HLA) molecules are surface proteins that have high sequence similarity. As such, it is often challenging to be certain of the specific gene product based solely on peptide-level evidence particularly for Cell Surface Capture experiments. As a result, it may be useful to exclude these from consideration when attempting to identify cell surface makers for a specific cell type."),
+                        tags$li(tags$u("Number of CSPA experiments (CSPA)"), ": The number of cell types in which this protein was observed in the", tags$a(href="http://wlab.ethz.ch/cspa/", "Cell Surface Protein Atlas."),  "This information can provide context for how specific a protein might be among cell types."),
+                        tags$li(tags$u("UniProt Linkout"), ": Link to the UniProt entry for input proteins providing effortless access to additional information about candidate markers.")
+                        ),
+                      h5(class="text-info", "Plots"),
+                      p("Several visualizations are made available by SurfaceGenie:"),
+                      tags$ul(
+                        tags$li(tags$u("SPC Histogram"), ": Shows the distribution of SPC scores."),
+                        tags$li(tags$u("Plots"), ": Scores from each of the 4 permutations are plotted in order of priority for all proteins within a dataset.")
+                      )
                     )
                   ),
                   tabPanel(
@@ -374,11 +363,11 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
                     h5(class="text-info", "Quick Lookup"),
                     p("Enter a UniProt accession number(s) for your protein(s) of interest (e.g. Q01650). Isoform 
                       annotations (e.g. Q01650-1) can be included; however, the specific isoform will not be considered 
-                      as SPC scores are indexed by parent protein accession number."),
+                      as SPC scores are indexed by parent protein accession number.  Up to 100 proteins 
+                      separated by commas can be searched using this method."),
                     p("If your data are in a form other than UniProt (e.g. ENSEMBL gene, UniGene), a conversion 
                       tool is available", a(href="https://www.uniprot.org/uploadlists/", "here"), "Under 'Select options', 
-                      select your ID type in the 'From' field and then 'UniProt KB' in the 'To' field. Up to 100 proteins 
-                      separated by commas can be searched using this method."),
+                      select your ID type in the 'From' field and then 'UniProt KB' in the 'To' field. "),
                     h5(class="text-info", "Bulk Lookup"),
                     p("Upload a csv file containing a single column of UniProt accession numbers, with the header 
                       labeled “Accession”.  Do not include extra characters in the header (e.g. not 'Accession #')."),
@@ -386,8 +375,7 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
                       a(href="https://www.uniprot.org/uploadlists/", "here"), 
                       ". Under 'Select options', select your ID type in the 'From' field and then 'UniProt KB'
                       in the 'To' field."),
-                    p("With this method your upload file will be returned as a file available for download which
-                      includes a column for SPC scores.")
+                    p("With this method, the original upload file will be returned as a downloadable csv file which includes a column containing SPC Scores appended to the original input file.")
                   ),
                   tabPanel(
                     "Quick Lookup",
