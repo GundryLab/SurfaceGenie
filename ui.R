@@ -11,19 +11,21 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
     div(
      h4("Welcome to ", span(class ="text-success", "SurfaceGenie"),"!"),
      p(tags$i("Integrating predictive and empirical data for rational marker prioritization")),
-     tags$table(width="100%",
-       tags$tr(
-     tags$img(src="SGsmall.png", width="330px", align="left"),
+#     tags$table(width="100%",
+#       tags$tr(
+      tags$img(src="website_homepage.png", width="330px", align="right"),
+#      tags$img(src="website_homepage.png",  align="right"),
      p("SurfaceGenie is a web app for analyzing omic datasets (e.g. proteomic, transcriptomic) to prioritize candidate cell-type specific markers of interest for immunophenotyping, immunotherapy, drug targeting, and other applications. It works by calculating the likelihood a molecule is informative for distinguishing among sample groups (e.g. cell types, experimental conditions). While a major benefit of SurfaceGenie is the ability to prioritize proteins that are localized to the cell surface, it is also possible to analyze data without this parameter to find proteins of interest that reside in other subcellular localizations. See the descriptions for each of the four permutations of the scoring algorithm."),
-     p("SurfaceGenie works well with quantitative proteomic and transcriptomic datasets, but others are also possible (see below). All calculations performed within SurfaceGenie are context-dependent, meaning that the tools will consider all data within a single dataset input (which may contain multiple experiments and/or cell types). If a user performs a comparison and subsequently determines additional data should be considered, a new file containing all data for the new comparison is required.")
-     )),
+     p("SurfaceGenie works well with quantitative proteomic and transcriptomic datasets, but others are also possible (see below). All calculations performed within SurfaceGenie are context-dependent, meaning that the tools will consider all data within a single dataset input (which may contain multiple experiments and/or cell types). If a user performs a comparison and subsequently determines additional data should be considered, a new file containing all data for the new comparison is required."),
+#     )),
      br(),
      tags$b("Scoring Permutations"),
-     tags$img(src="scoringgrid.png", width="330px", align="right"),
+#     tags$img(src="scoringgrid.png", width="330px", align="right"),
      p( tags$i("GenieScore: "), "Use to prioritize ", tags$b("surface proteins"), "that have ", tags$b("disparate"), " levels of abundance/expression."),
      p( tags$i("IsoGenieScore: "), "Use to prioritize ", tags$b("surface proteins"), "that have ", tags$b("similar, high"), " levels of abundance/expression."),
      p( tags$i("OmniGenieScore: "), "Use to prioritize ", tags$b("any molecules"), " (genes/proteins) that have ", tags$b("disparate"), " levels of abundance/expression."),
      p( tags$i("IsoOmniGenieScore: "), "Use to prioritize ", tags$b("any molecules"), " (genes/proteins) that have ", tags$b("similar, high"), " levels of abundance/expression.")
+#       ))
     ),
     br(),
     div(
@@ -37,7 +39,7 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
                that a particular protein can be present at the cell surface. This value is a sum 
                of the number of predictive datasets for which a protein has been predicted to be 
                localized to the cell surface. Scores range 0-4. For more details on the predictive 
-               datasets used, ", a(href="http://google.com", "click here"), "."),
+               datasets used, see the References tab."),
        tags$li(tags$u("Distribution Score"), br(), "A measure of how evenly or unevenly distributed a 
                protein is among multiple samples within a comparison dataset. It is based on the 
                Gini coefficient for calculating statistical dispersion of values. Scores range 0 - 1/(1-N)."),
