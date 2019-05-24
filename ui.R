@@ -412,9 +412,9 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
     div(
       h4("How to reference ", span(class ="text-success", "SurfaceGenie") ),
       p("If you use any of the SurfaceGenie tools in your work, please cite the original manuscript:"),
-      p("Waas M, Snarrenberg ST, Littrell J, Jones Lipinski RA, Hansen PA, Corbett JA, Gundry RL, SurfaceGenie: 
-        A web-based application for integrating predictive and experimental data for rational candidate surface 
-        protein marker prioritization,", tags$a(href="https://doi.org/10.1101/575969", "https://doi.org/10.1101/575969"))
+      p("Waas M, Snarrenberg ST, Littrell J, Jones Lipinski RA, Hansen PA, Corbett JA, Gundry RL, 
+        SurfaceGenie: A web-based application for prioritizing cell-type specific marker candidates,", 
+        tags$a(href="https://doi.org/10.1101/575969", "https://doi.org/10.1101/575969"))
     ),
     br(),
     div(

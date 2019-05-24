@@ -184,19 +184,18 @@ SG_export <- function(adata, exportvars1, exportvars2 , scoringvars, species) {
   if("CSPA #e" %in% exportvars2){
     adata <- get_numCSPA(adata, accessions)
   }
-  print(exportvars2)
-  print(colnames(adata))
   # Return data with export options as well as dataframe size
   return(adata[,c(reqcols, exportvars1, exportvars2, scoringvars)])
 }
 
 ##########  SurfaceGenie Plots  ##########
 
+
 SPC_hist <- function(adata) {
   scores <- adata[["SPC"]]
-  bins <- seq(0, 4, length.out=5)
-  hist(scores, breaks=bins, xlab="SPC Score", main="SPC Score Histogram",
-       col="#3498db", border="white")
+  counts <- count(scores)
+  barplot(counts[["freq"]], names.arg=counts[["x"]], xlab="SPC Score", ylab="frequency", 
+          main="SPC Score Histogram", col="#3498db", border="white")
 }
 
 SG_dist <- function(adata) {
@@ -218,7 +217,7 @@ SG_dist <- function(adata) {
           mode='markers', 
           hoverinfo = 'text', 
           hoverlabel = list(bgcolor='white'),
-          text=paste("Gene Name: ", adata$geneName, "<br>Accession: ", adata$Accession, "<br>CD: ", adata$CD), 
+          text=paste("Gene Name: ", adata$geneName, "<br>Accession: ", adata$Accession, "<br>CD: ", adata$CD, "<br>GenieScore: ", adata$GS, "<br>Rank: ", 1:nrow(adata) ), 
           color=~isCD,
           colors=c("#3498db", "#c9c9d4") # blue, grey
   ) %>%
@@ -263,7 +262,7 @@ eineG_dist <- function(adata) {
           mode='markers', 
           hoverinfo = 'text', 
           hoverlabel = list(bgcolor='white'),
-          text=paste("Gene Name: ", adata$geneName, "<br>Accession: ", adata$Accession, "<br>CD: ", adata$CD), 
+          text=paste("Gene Name: ", adata$geneName, "<br>Accession: ", adata$Accession, "<br>CD: ", adata$CD, "<br>IsoGenieScore: ", adata$eineG, "<br>Rank: ", 1:nrow(adata)), 
           color=~isCD,
           colors=c("#3498db", "#c9c9d4") # blue, grey
   ) %>%
@@ -308,7 +307,7 @@ iGenie_dist <- function(adata) {
           mode='markers', 
           hoverinfo = 'text', 
           hoverlabel = list(bgcolor='white'),
-          text=paste("Gene Name: ", adata$geneName, "<br>Accession: ", adata$Accession, "<br>CD: ", adata$CD), 
+          text=paste("Gene Name: ", adata$geneName, "<br>Accession: ", adata$Accession, "<br>CD: ", adata$CD, "<br>OmniGenieScore: ", adata$iGenie, "<br>Rank: ", 1:nrow(adata)), 
           color=~isCD,
           colors=c("#3498db", "#c9c9d4") # blue, grey
   ) %>%
@@ -354,7 +353,7 @@ eineGi_dist <- function(adata) {
           mode='markers', 
           hoverinfo = 'text', 
           hoverlabel = list(bgcolor='white'),
-          text=paste("Gene Name: ", adata$geneName, "<br>Accession: ", adata$Accession, "<br>CD: ", adata$CD), 
+          text=paste("Gene Name: ", adata$geneName, "<br>Accession: ", adata$Accession, "<br>CD: ", adata$CD, "<br>IsoOmniGenieScore: ", adata$eineGi, "<br>Rank: ", 1:nrow(adata)), 
           color=~isCD,
           colors=c("#3498db", "#c9c9d4") # blue, grey
   ) %>%
