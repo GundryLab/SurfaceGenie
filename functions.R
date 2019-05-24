@@ -31,13 +31,13 @@ get_SPC <- function(adata, Accession, species) {
   return(adata)
 }
 
-filter_by_HLA <- function(adata, Accession) {
-  HLA_molecs <- read.csv(file="ref/HLA.csv", header=TRUE)
-  noiso <- data.frame(Accession)
-  noiso_HLA <- join(noiso, HLA_molecs, by="Accession", match="all")
-  idx <- sapply(is.na(noiso_HLA["HLA"]), isTRUE)
-  return(adata[idx,])
-}
+#filter_by_HLA <- function(adata, Accession) {
+#  HLA_molecs <- read.csv(file="ref/HLA.csv", header=TRUE)
+#  noiso <- data.frame(Accession)
+#  noiso_HLA <- join(noiso, HLA_molecs, by="Accession", match="all")
+#  idx <- sapply(is.na(noiso_HLA["HLA"]), isTRUE)
+#  return(adata[idx,])
+#}
 
 get_Gini_coeff <- function(sdata, nsamps) {
   cmat <- matrix(rep(t(sdata), nsamps), ncol=nsamps, byrow=TRUE)
@@ -113,6 +113,22 @@ get_numCSPA <- function(adata, Accession) {
   adata["CSPA #e"] <- df["CSPA..e"]
   return(adata)
 }
+
+get_HLA <- function(adata, Accession, species) {
+  if(species=="human") {
+    HLA <- read.csv("ref/HLA.csv", header=TRUE)
+  } else if (species=="rat") {
+    HLA <- read.csv("ref/Rat_HLA.csv", header=TRUE)
+  } else if (species=="mouse") {
+    HLA <- read.csv("ref/Mouse_HLA.csv", header=TRUE)
+  }
+  df <- data.frame(Accession)
+  df <- join(df, HLA, by="Accession", match="all")
+  adata["HLA"] <- df["HLA"]
+  return(adata)
+}
+
+
 get_geneName <- function(adata, Accession, species) {
   if(species=="human") {
     gn <- read.csv("ref/GeneName.csv", header=TRUE)
@@ -142,6 +158,7 @@ SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupco
   
   adata <- get_SPC(adata, accessions, species)
   adata <- get_CD(adata, accessions, species)
+  adata <- get_HLA(adata, accessions, species)
   adata <- get_geneName(adata, accessions, species)
   
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)  
@@ -174,15 +191,15 @@ SG_export <- function(adata, exportvars1, exportvars2 , scoringvars, species) {
   reqcols <- colnames(adata)[1:(ncol(adata)-10)]
   
   # Exclude HLA molecules
-  if("HLA" %in% exportvars2){
-    adata <- filter_by_HLA(adata, accessions)
-    accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
-    #need to remove HLA from exportvars because the other vars concern the number
-    #of columns whereas HLA is the rows.  At the end of this function, the exportvars
-    #gets passed and can't have any variables that concern rows.
-    ev<-c("HLA")
-    exportvars2 <- exportvars2[!exportvars2 %in% ev]
-  }
+  # if("HLA" %in% exportvars2){
+  #   adata <- filter_by_HLA(adata, accessions)
+  #   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
+  #   #need to remove HLA from exportvars because the other vars concern the number
+  #   #of columns whereas HLA is the rows.  At the end of this function, the exportvars
+  #   #gets passed and can't have any variables that concern rows.
+  #   ev<-c("HLA")
+  #   exportvars2 <- exportvars2[!exportvars2 %in% ev]
+  # }
   
   # Export option: append uniprot linkout column
   if("UniProt Linkout" %in% exportvars2){
@@ -204,7 +221,8 @@ SG_export <- function(adata, exportvars1, exportvars2 , scoringvars, species) {
   if("CSPA #e" %in% exportvars2){
     adata <- get_numCSPA(adata, accessions)
   }
-  
+  print(exportvars2)
+  print(colnames(adata))
   # Return data with export options as well as dataframe size
   return(adata[,c(reqcols, exportvars1, exportvars2, scoringvars)])
 }

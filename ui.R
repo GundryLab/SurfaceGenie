@@ -205,13 +205,14 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
       checkboxGroupInput(
         'export_options2', "Annotations / Link outs:",
         choiceNames = list(
-             "Exclude HLA molecules",
+             "HLA molecules",
              "CD molecules",
+             "Gene Name",
              "Number of CSPA experiments",
              "UniProt Linkout"),
         choiceValues = list(
-          "HLA", "CD", "CSPA #e", "UniProt Linkout"),
-        selected = list("HLA")
+          "HLA", "CD", "geneName", "CSPA #e", "UniProt Linkout")
+#        selected = list("HLA")
   )
 ),
     
