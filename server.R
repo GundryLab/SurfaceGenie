@@ -86,26 +86,6 @@ function(input, output, session) {
   
   ##########  SurfaceGenie: Output Display  ##########
   
-#  myChoiceNames = list(
-#    "SPC score (SPC)",
-#    "Exclude HLA molecules",
-#    "CD molecules",
-#    "Number of CSPA experiments",
-#    "Gini coefficient (Gini)",
-#    "Signal strength (SS)",
-##    "SurfaceGenie: Genie Score (GS)",
-#    "UniProt Linkout")
-#  myChoiceValues= list(
-##    "SPC", "HLA", "CD", "CSPA #e", "Gini", "SS", "GS", "UniProt Linkout")
-#    "SPC", "HLA", "CD", "CSPA #e", "Gini", "SS", "UniProt Linkout")
-#
-#  observe({
-#    updateCheckboxGroupInput(
-#      session, 'export_options', choiceNames=myChoiceNames, choiceValues = myChoiceValues, 
-#      selected = if (input$bar) myChoiceValues
-#    )
-#  })
-
   # Apply export options
   data_export <- reactive({
     df <- SG_export(data_output(), input$export_options1, input$export_options2, input$scoring_opts, input$species)
@@ -360,11 +340,7 @@ function(input, output, session) {
     downloadButton("eineGi_dist_SVGdl", " .svg", class="download_this")
   })
   
-  
-  
-  
-  
-  
+
   # Downloadable csv of selected dataset
   output$csv_download <- downloadHandler(
     filename = function() {
@@ -377,7 +353,6 @@ function(input, output, session) {
   )
   output$csv_dlbutton <- renderUI({
     req(input$file1)
-    #    downloadButton("csv_download", "Download .csv file output")
     downloadButton("csv_download", " .csv")
   })
   

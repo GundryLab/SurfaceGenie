@@ -11,21 +11,15 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
     div(
      h4("Welcome to ", span(class ="text-success", "SurfaceGenie"),"!"),
      p(tags$i("Integrating predictive and empirical data for rational marker prioritization")),
-#     tags$table(width="100%",
-#       tags$tr(
       tags$img(src="website_homepage.png", width="330px", align="right"),
-#      tags$img(src="website_homepage.png",  align="right"),
      p("SurfaceGenie is a web app for analyzing omic datasets (e.g. proteomic, transcriptomic) to prioritize candidate cell-type specific markers of interest for immunophenotyping, immunotherapy, drug targeting, and other applications. It works by calculating the likelihood a molecule is informative for distinguishing among sample groups (e.g. cell types, experimental conditions). While a major benefit of SurfaceGenie is the ability to prioritize proteins that are localized to the cell surface, it is also possible to analyze data without this parameter to find proteins of interest that reside in other subcellular localizations. See the descriptions for each of the four permutations of the scoring algorithm."),
      p("SurfaceGenie works well with quantitative proteomic and transcriptomic datasets, but others are also possible (see below). All calculations performed within SurfaceGenie are context-dependent, meaning that the tools will consider all data within a single dataset input (which may contain multiple experiments and/or cell types). If a user performs a comparison and subsequently determines additional data should be considered, a new file containing all data for the new comparison is required."),
-#     )),
      br(),
      tags$b("Scoring Permutations"),
-#     tags$img(src="scoringgrid.png", width="330px", align="right"),
      p( tags$i("GenieScore: "), "Use to prioritize ", tags$b("surface proteins"), "that have ", tags$b("disparate"), " levels of abundance/expression."),
      p( tags$i("IsoGenieScore: "), "Use to prioritize ", tags$b("surface proteins"), "that have ", tags$b("similar, high"), " levels of abundance/expression."),
      p( tags$i("OmniGenieScore: "), "Use to prioritize ", tags$b("any molecules"), " (genes/proteins) that have ", tags$b("disparate"), " levels of abundance/expression."),
      p( tags$i("IsoOmniGenieScore: "), "Use to prioritize ", tags$b("any molecules"), " (genes/proteins) that have ", tags$b("similar, high"), " levels of abundance/expression.")
-#       ))
     ),
     br(),
     div(
@@ -79,7 +73,6 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
                          "text/comma-separated-values,text/plain",
                          ".csv"),
                 buttonLabel = "Browse...", placeholder = "No file selected"),
-#      hr(),
 
       h5(class="text-info", "Scoring Options"),
       #### regular GS
@@ -87,7 +80,6 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
       #### GS reversed = eineG
       #### GS reversed, no SPC = eineGi
       checkboxGroupInput(
-#        "scoring_opts", "Select scoring methods:",
         "scoring_opts", NULL,
         choiceNames = list(
           "SurfaceGenie",
@@ -99,7 +91,7 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
           selected = list("GS")
       ),
 
-      hr(),
+      h1(),
       h5(class="text-info", "Species"),
       radioButtons(
         "species", NULL,
@@ -112,10 +104,9 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
         #        choiceValues = NULL
       ),      
 
-      hr(),
+      h1(),
       h5(class="text-info", "Processing Option"),
       checkboxGroupInput(
-#        "processing_opts", "Select processing options:",
         "processing_opts", NULL,
         choiceNames = list(
           "Group samples"),
@@ -178,30 +169,19 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
         )
       ),
 
-      hr(),
-      h5(class="text-info", "Export Options (for CSV Download Tab)"),
+      h1(),
+      h5(class="text-info", "Export Options (CSV Download Tab)"),
       checkboxGroupInput(
         'export_options1', "SurfaceGenie Components:",
-#        'export_options', NULL,
         choiceNames = list(
           "SPC score (SPC)",
           "Gini coefficient (Gini)",
           "Signal strength (SS)"
         ),
-#          "Exclude HLA molecules",
-#          "CD molecules",
-#          "Number of CSPA experiments",
-#          "Gini coefficient (Gini)",
-#          "Signal strength (SS)",
-#          "SurfaceGenie: Genie Score (GS)",
-#          "UniProt Linkout"),
         choiceValues = list(
-#          "SPC", "HLA", "CD", "CSPA #e", "Gini", "SS", "GS", "UniProt Linkout"),
-#          "SPC", "HLA", "CD", "CSPA #e", "Gini", "SS", "UniProt Linkout"),
           "SPC", "Gini", "SS"),
         selected = list("GS")
       ),
-#      checkboxInput('bar', 'All/None')
       checkboxGroupInput(
         'export_options2', "Annotations / Link outs:",
         choiceNames = list(
@@ -212,7 +192,6 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
              "UniProt Linkout"),
         choiceValues = list(
           "HLA", "CD", "geneName", "CSPA #e", "UniProt Linkout")
-#        selected = list("HLA")
   )
 ),
     
@@ -424,12 +403,6 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
       p(class="text-info", style="text-indent:1.5em", "www.cellsurfer.net")
     ),
     br()
-#    tags$iframe(id = "googleform",
-#                src = "https://docs.google.com/forms/d/e/1FAIpQLScRtGpbasA6zokudzm5ujmdatP1bk2AZf_eVIloN8JAftUTVQ/viewform?embedded=true",
-#                width = 700,
-#                height = 700,
-#                frameborder = 0,
-#                marginheight = 0)
  ),
 
   ##########    References   ##########

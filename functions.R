@@ -24,20 +24,9 @@ get_SPC <- function(adata, Accession, species) {
   noiso_SPC <- join(noiso, SPC_scores, by="Accession", type="left", match="first")
   noiso_SPC["SPC"][is.na(noiso_SPC["SPC"])]<-0
   adata["SPC"] <- noiso_SPC["SPC"]
-  #  adata["SPCdisplay"] <- noiso_SPC["SPC"]
   adata["noSPC"] <- matrix(rep(1, nrow(adata)))  
-  #  idx <- sapply(adata["SPC"] > 0, isTRUE)
-  #  return(adata[idx,])
   return(adata)
 }
-
-#filter_by_HLA <- function(adata, Accession) {
-#  HLA_molecs <- read.csv(file="ref/HLA.csv", header=TRUE)
-#  noiso <- data.frame(Accession)
-#  noiso_HLA <- join(noiso, HLA_molecs, by="Accession", match="all")
-#  idx <- sapply(is.na(noiso_HLA["HLA"]), isTRUE)
-#  return(adata[idx,])
-#}
 
 get_Gini_coeff <- function(sdata, nsamps) {
   cmat <- matrix(rep(t(sdata), nsamps), ncol=nsamps, byrow=TRUE)
@@ -163,11 +152,6 @@ SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupco
   
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)  
   
-  #  # probably move this into a loop for calc all four scores
-  #  if(!("SPC" %in% processing_opts)){
-  #    adata["SPC"] <- matrix(rep(1, nrow(adata)))
-  #  }
-  
   # Caluclate Gini coefficient and Signal Strength
   # Calculate all four scores
   for(irow in 1:nrow(adata)){
@@ -179,9 +163,8 @@ SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupco
     adata[irow, "iGenie"] <-get_dissimilar_score(adata[irow,c("SPC","noSPC","Gini","SS")], nsamps,"noSPC")
     adata[irow, "eineGi"] <-get_similar_score(adata[irow,c("SPC","noSPC","Gini","SS")], nsamps,"noSPC")
   }
-  # Return data with SPC score and GS  only
+
   return(adata)
-  #return(adata[,c(reqcols, "SPC", "Gini", "SS", "GS")])
 }
 
 ##########  SurfaceGenie Export  ##########
@@ -190,33 +173,13 @@ SG_export <- function(adata, exportvars1, exportvars2 , scoringvars, species) {
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
   reqcols <- colnames(adata)[1:(ncol(adata)-11)]
   
-  # Exclude HLA molecules
-  # if("HLA" %in% exportvars2){
-  #   adata <- filter_by_HLA(adata, accessions)
-  #   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
-  #   #need to remove HLA from exportvars because the other vars concern the number
-  #   #of columns whereas HLA is the rows.  At the end of this function, the exportvars
-  #   #gets passed and can't have any variables that concern rows.
-  #   ev<-c("HLA")
-  #   exportvars2 <- exportvars2[!exportvars2 %in% ev]
-  # }
-  
+
   # Export option: append uniprot linkout column
   if("UniProt Linkout" %in% exportvars2){
     adata <- append_UPL(adata, accessions)
   }
   
-  # Export option: append CD molecule info
-#  if("CD" %in% exportvars){
-#    if(species=="human") {
-#      adata <- get_CD(adata, accessions, species)
-#    } else if(species=="rat") {
-#      adata <- get_CD(adata, accessions, species)
-#    } else if(species=="mouse") {
-#      adata <- get_CD(adata, accessions, species)
-#    }
-#  }
-  
+
   # Export option: append # CSPA experiments
   if("CSPA #e" %in% exportvars2){
     adata <- get_numCSPA(adata, accessions)
@@ -238,8 +201,6 @@ SPC_hist <- function(adata) {
 
 SG_dist <- function(adata) {
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
-#  adata <- get_CD(adata, accessions)
-#  adata <- get_geneName(adata, accessions)
   adata <- adata[,c("Accession", "geneName", "GS", "CD")]
   adata <- adata[order(-adata$GS),]
   CD <- adata[,"CD"]
@@ -271,7 +232,6 @@ SG_dist <- function(adata) {
 
 SG_dist_export <- function(adata) {
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
-#  adata <- get_CD(adata, accessions)
   adata <- adata[,c("GS", "CD")]
   adata <- adata[order(-adata$GS),]
   CD <- adata[,"GS"]
@@ -286,8 +246,6 @@ SG_dist_export <- function(adata) {
 
 eineG_dist <- function(adata) {
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
-#  adata <- get_CD(adata, accessions)
-#  adata <- get_geneName(adata, accessions)
   adata <- adata[,c("Accession", "geneName", "eineG", "CD")]
   adata <- adata[order(-adata$eineG),]
   CD <- adata[,"CD"]
@@ -319,7 +277,6 @@ eineG_dist <- function(adata) {
 
 eineG_dist_export <- function(adata) {
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
-#  adata <- get_CD(adata, accessions)
   adata <- adata[,c("eineG", "CD")]
   adata <- adata[order(-adata$eineG),]
   CD <- adata[,"eineG"]
@@ -334,8 +291,6 @@ eineG_dist_export <- function(adata) {
 
 iGenie_dist <- function(adata) {
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
-#  adata <- get_CD(adata, accessions)
-#  adata <- get_geneName(adata, accessions)
   adata <- adata[,c("Accession", "geneName", "iGenie", "CD")]
   adata <- adata[order(-adata$iGenie),]
   CD <- adata[,"CD"]
@@ -367,7 +322,6 @@ iGenie_dist <- function(adata) {
 
 iGenie_dist_export <- function(adata) {
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
-#  adata <- get_CD(adata, accessions)
   adata <- adata[,c("iGenie", "CD")]
   adata <- adata[order(-adata$iGenie),]
   CD <- adata[,"iGenie"]
@@ -383,8 +337,6 @@ iGenie_dist_export <- function(adata) {
 
 eineGi_dist <- function(adata) {
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
-#  adata <- get_CD(adata, accessions)
-#  adata <- get_geneName(adata, accessions)
   adata <- adata[,c("Accession", "geneName", "eineGi", "CD")]
   adata <- adata[order(-adata$eineGi),]
   CD <- adata[,"CD"]
@@ -416,7 +368,6 @@ eineGi_dist <- function(adata) {
 
 eineGi_dist_export <- function(adata) {
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
-#  adata <- get_CD(adata, accessions)
   adata <- adata[,c("eineGi", "CD")]
   adata <- adata[order(-adata$eineGi),]
   CD <- adata[,"eineGi"]
