@@ -170,6 +170,7 @@ SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupco
 ##########  SurfaceGenie Export  ##########
 
 SG_export <- function(adata, exportvars1, exportvars2 , scoringvars, species) {
+  
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
   reqcols <- colnames(adata)[1:(ncol(adata)-11)]
   
@@ -208,7 +209,7 @@ SG_dist <- function(adata) {
   df$CD[!is.na(df$CD)]<-"CD"
   df$CD[is.na(df$CD)]<-"non-CD"
   adata["isCD"]<-df["CD"]
-  fa<-list(family="Arial, sans-serif", size=12)
+  fa<-list(family="Arial, sans-serif", size=12, color='black')
   ft<-list(family="Arial, sans-serif", size=14, color='black')
   plot_ly(data=adata,
           x=~1:nrow(adata),
@@ -222,9 +223,9 @@ SG_dist <- function(adata) {
           colors=c("#3498db", "#c9c9d4") # blue, grey
   ) %>%
     layout(
-      title="<b>Genie Scores in Descending Order</b>", titlefont=ft,
       xaxis=list(title="rank", titlefont=fa, showgrid=FALSE),
       yaxis=list(title="Genie Score", titlefont=fa, showgrid=FALSE),
+      title=list(text="<b>Genie Scores in Descending Order</b>", font=ft),
       legend=list(x=0.7,y=0.9) # controls the location on the plot of the legend
     )
 }
@@ -253,7 +254,7 @@ eineG_dist <- function(adata) {
   df$CD[!is.na(df$CD)]<-"CD"
   df$CD[is.na(df$CD)]<-"non-CD"
   adata["isCD"]<-df["CD"]
-  fa<-list(family="Arial, sans-serif", size=12)
+  fa<-list(family="Arial, sans-serif", size=12, color='black')
   ft<-list(family="Arial, sans-serif", size=14, color='black')
   plot_ly(data=adata,
           x=~1:nrow(adata),
@@ -267,7 +268,7 @@ eineG_dist <- function(adata) {
           colors=c("#3498db", "#c9c9d4") # blue, grey
   ) %>%
     layout(
-      title="<b>IsoGenie Scores in Descending Order</b>", titlefont=ft,
+      title=list(text="<b>IsoGenie Scores in Descending Order</b>", font=ft),
       xaxis=list(title="rank", titlefont=fa, showgrid=FALSE),
       yaxis=list(title="IsoGenie Score", titlefont=fa, showgrid=FALSE),
       legend=list(x=0.7,y=0.9) # controls the location on the plot of the legend
@@ -298,7 +299,7 @@ iGenie_dist <- function(adata) {
   df$CD[!is.na(df$CD)]<-"CD"
   df$CD[is.na(df$CD)]<-"non-CD"
   adata["isCD"]<-df["CD"]
-  fa<-list(family="Arial, sans-serif", size=12)
+  fa<-list(family="Arial, sans-serif", size=12, color='black')
   ft<-list(family="Arial, sans-serif", size=14, color='black')
   plot_ly(data=adata,
           x=~1:nrow(adata),
@@ -312,7 +313,7 @@ iGenie_dist <- function(adata) {
           colors=c("#3498db", "#c9c9d4") # blue, grey
   ) %>%
     layout(
-      title="<b>OmniGenie Scores in Descending Order</b>", titlefont=ft,
+      title=list(text="<b>OmniGenie Scores in Descending Order</b>", font=ft),
       xaxis=list(title="rank", titlefont=fa, showgrid=FALSE),
       yaxis=list(title="OmniGenie Score", titlefont=fa, showgrid=FALSE),
       legend=list(x=0.7,y=0.9) # controls the location on the plot of the legend
@@ -344,7 +345,7 @@ eineGi_dist <- function(adata) {
   df$CD[!is.na(df$CD)]<-"CD"
   df$CD[is.na(df$CD)]<-"non-CD"
   adata["isCD"]<-df["CD"]
-  fa<-list(family="Arial, sans-serif", size=12)
+  fa<-list(family="Arial, sans-serif", size=12, color='black')
   ft<-list(family="Arial, sans-serif", size=14, color='black')
   plot_ly(data=adata,
           x=~1:nrow(adata),
@@ -358,7 +359,7 @@ eineGi_dist <- function(adata) {
           colors=c("#3498db", "#c9c9d4") # blue, grey
   ) %>%
     layout(
-      title="<b>IsoOmniGenie Scores in Descending Order</b>", titlefont=ft,
+      title=list(text="<b>IsoOmniGenie Scores in Descending Order</b>", titlefont=ft),
       xaxis=list(title="rank", titlefont=fa, showgrid=FALSE),
       yaxis=list(title="IsoOmniGenie Score", titlefont=fa, showgrid=FALSE),
       legend=list(x=0.7,y=0.9) # controls the location on the plot of the legend

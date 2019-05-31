@@ -92,7 +92,6 @@ function(input, output, session) {
     names(df)[names(df) == "eineG"] <- "IsoGenie"
     names(df)[names(df) == "iGenie"] <- "OmniGenie"
     names(df)[names(df) == "eineGi"] <- "IsoOmniGenie"
-    
     output_size <- c(nrow(df), ncol(df))
     list(df, output_size)
   })

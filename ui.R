@@ -82,7 +82,7 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
       checkboxGroupInput(
         "scoring_opts", NULL,
         choiceNames = list(
-          "SurfaceGenie",
+          "Genie",
           "IsoGenie",
           "OmniGenie",
           "IsoOmniGenie"),
