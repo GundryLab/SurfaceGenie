@@ -15,14 +15,32 @@ function(input, output, session) {
   
   # Load and process data
   data_input <- reactive({
-    df <- read.csv(input$file1$datapath, header=TRUE)
-    input_size <- c(nrow(df), ncol(df))
-    list(df, input_size)
+    withProgress(message = 'Reading Data', value = 0, {
+      df <- read.csv(input$file1$datapath, header=TRUE)
+      input_size <- c(nrow(df), ncol(df))
+      list(df, input_size)
+    })
   })
   
   ##########  SurfaceGenie: Data Grouping  ##########
   
   data_output <- reactive({
+
+    # setting up the progress meter
+    progress<-shiny::Progress$new()
+    progress$set(message = "Calculating Scores", value=0)
+    on.exit(progress$close())
+    
+    # creating the progress function to pass to the Surface Genie function
+    updateProgress <- function(value=NULL,detail=NULL) {
+      if(is.null(value)){
+        value <- progress$getValue()
+        value <- value + (progress$getMax()-value)/10
+      }
+      progress$set(value=value, detail=detail)
+    }
+
+        
     if("grouping" %in% input$processing_opts){
       gtags <- c("Group 1", "Group 2", "Group 3", "Group 4", "Group 5")
       groupcols <- list()
@@ -74,13 +92,13 @@ function(input, output, session) {
       }
       # call this if grouped
       SurfaceGenie(data_input()[[1]], input$processing_opts, 
-                   input$groupmethod, input$numgroups, groupcols, input$species)
+                   input$groupmethod, input$numgroups, groupcols, input$species, updateProgress)
       
     }
     else{
       # call this if not grouped
       SurfaceGenie(data_input()[[1]], input$processing_opts, 
-                   groupmethod=NULL, numgroups=0, groupcols=NULL, input$species)
+                   groupmethod=NULL, numgroups=0, groupcols=NULL, input$species, updateProgress)
     }
   })
   
@@ -125,6 +143,7 @@ function(input, output, session) {
     req(input$file1)
     SPC_hist(data_output())
   })
+  
   output$SG_SPC_hist_PNGdl <- downloadHandler(
     filename = function() { 
       fname <- unlist(strsplit(as.character(input$file1), "[.]"))[1]

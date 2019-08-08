@@ -134,7 +134,7 @@ get_geneName <- function(adata, Accession, species) {
 
 ##########  Genie Score Main Function  ##########
 
-SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupcols, species) {
+SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupcols, species, updateProgress) {
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
   nsamps <- ncol(adata) - 1
   reqcols <- colnames(adata)
@@ -152,9 +152,17 @@ SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupco
   
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)  
   
+  
+  rows = nrow(adata)
   # Caluclate Gini coefficient and Signal Strength
   # Calculate all four scores
-  for(irow in 1:nrow(adata)){
+  for(irow in 1:rows){
+    if(irow%%100==0){
+      if (is.function(updateProgress)) {
+        text <- paste0("row:", irow, "of ", rows)
+        updateProgress(detail = text)
+      }
+    }
     sdata <- adata[irow, 2:(nsamps + 1)]
     adata[irow, "Gini"] <- get_Gini_coeff(sdata, nsamps)
     adata[irow, "SS"] <- get_signal_strength(sdata)
@@ -163,7 +171,7 @@ SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupco
     adata[irow, "iGenie"] <-get_dissimilar_score(adata[irow,c("SPC","noSPC","Gini","SS")], nsamps,"noSPC")
     adata[irow, "eineGi"] <-get_similar_score(adata[irow,c("SPC","noSPC","Gini","SS")], nsamps,"noSPC")
   }
-
+#               })
   return(adata)
 }
 
@@ -173,14 +181,12 @@ SG_export <- function(adata, exportvars1, exportvars2 , scoringvars, species) {
   
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
   reqcols <- colnames(adata)[1:(ncol(adata)-11)]
-  
 
   # Export option: append uniprot linkout column
   if("UniProt Linkout" %in% exportvars2){
     adata <- append_UPL(adata, accessions)
   }
   
-
   # Export option: append # CSPA experiments
   if("CSPA #e" %in% exportvars2){
     adata <- get_numCSPA(adata, accessions)

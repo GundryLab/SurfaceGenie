@@ -82,7 +82,7 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
       checkboxGroupInput(
         "scoring_opts", NULL,
         choiceNames = list(
-          "Genie",
+          "SurfaceGenie",
           "IsoGenie",
           "OmniGenie",
           "IsoOmniGenie"),
@@ -293,38 +293,50 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
                     br(),
                     br(),
                     br(),
-                    plotlyOutput("SG_dist"),
-                    div(class="bnav",
-                    uiOutput("SG_dist_PNGdlbutton", class="download_this"),
-                    uiOutput("SG_dist_SVGdlbutton", class="download_this")),
-                    p(),
-                    br(),
-                    br(),
-                    br(),
+                    conditionalPanel(
+                      condition = "input.scoring_opts.indexOf('GS')>-1",
+                      plotlyOutput("SG_dist"),
+                      div(class="bnav",
+                      uiOutput("SG_dist_PNGdlbutton", class="download_this"),
+                      uiOutput("SG_dist_SVGdlbutton", class="download_this")),
+                      p(),
+                      br(),
+                      br(),
+                      br()
+                    ),
                     #eineG
-                    plotlyOutput("eineG_dist"),
-                    div(class="bnav",
-                        uiOutput("eineG_dist_PNGdlbutton", class="download_this"),
-                        uiOutput("eineG_dist_SVGdlbutton", class="download_this")),
-                    p(),
-                    br(),
-                    br(),
-                    br(),
+                    conditionalPanel(
+                      condition = "input.scoring_opts.indexOf('eineG')>-1",
+                      plotlyOutput("eineG_dist"),
+                      div(class="bnav",
+                      uiOutput("eineG_dist_PNGdlbutton", class="download_this"),
+                      uiOutput("eineG_dist_SVGdlbutton", class="download_this")),
+                      p(),
+                      br(),
+                      br(),
+                      br()
+                    ),
                     #iGenie
-                    plotlyOutput("iGenie_dist"),
-                    div(class="bnav",
-                        uiOutput("iGenie_dist_PNGdlbutton", class="download_this"),
-                        uiOutput("iGenie_dist_SVGdlbutton", class="download_this")),
-                    p(),
-                    br(),
-                    br(),
-                    br(),
+                    conditionalPanel(
+                      condition = "input.scoring_opts.indexOf('iGenie')>-1",
+                      plotlyOutput("iGenie_dist"),
+                      div(class="bnav",
+                      uiOutput("iGenie_dist_PNGdlbutton", class="download_this"),
+                      uiOutput("iGenie_dist_SVGdlbutton", class="download_this")),
+                      p(),
+                      br(),
+                      br(),
+                      br()
+                    ),
                     #eineGi
-                    plotlyOutput("eineGi_dist"),
-                    div(class="bnav",
-                        uiOutput("eineGi_dist_PNGdlbutton", class="download_this"),
-                        uiOutput("eineGi_dist_SVGdlbutton", class="download_this")),
-                    br()
+                    conditionalPanel(
+                      condition = "input.scoring_opts.indexOf('eineGi')>-1",
+                      plotlyOutput("eineGi_dist"),
+                      div(class="bnav",
+                      uiOutput("eineGi_dist_PNGdlbutton", class="download_this"),
+                      uiOutput("eineGi_dist_SVGdlbutton", class="download_this")),
+                      br()
+                    )
                   )
       )
     )
