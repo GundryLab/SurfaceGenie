@@ -149,13 +149,28 @@ SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupco
   adata <- get_CD(adata, accessions, species)
   adata <- get_HLA(adata, accessions, species)
   adata <- get_geneName(adata, accessions, species)
+
+  # rather than pulling apart and inserting into a data frame and 
+  # calling functions to calculate the GS, iGenie, etc scores, we 
+  # will calculate them directly, drop them into a vector then
+  # finally add the vectors to the data frame.  This has reduced 
+  # the time for a 3700 line file from 14 secs to 3 (including the
+  # annotation merge step)
+  
+  # set up vectors to eventually put in data frame
+  Gmax <- 1 - 1/nsamps
+  Ginis<-vector(mode="logical",length=0)
+  SSs<-vector(mode="logical",length=0)
+  GSs<-vector(mode="logical",length=0)
+  eineGs<-vector(mode="logical",length=0)
+  iGenies<-vector(mode="logical",length=0)
+  eineGis<-vector(mode="logical",length=0)
   
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)  
   
-  
+  # loop through data set
+  # update the progress meter
   rows = nrow(adata)
-  # Caluclate Gini coefficient and Signal Strength
-  # Calculate all four scores
   for(irow in 1:rows){
     if(irow%%100==0){
       if (is.function(updateProgress)) {
@@ -163,15 +178,34 @@ SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupco
         updateProgress(detail = text)
       }
     }
+    
+    #calculate the scores
     sdata <- adata[irow, 2:(nsamps + 1)]
-    adata[irow, "Gini"] <- get_Gini_coeff(sdata, nsamps)
-    adata[irow, "SS"] <- get_signal_strength(sdata)
-    adata[irow, "GS"] <- get_dissimilar_score(adata[irow,c("SPC","noSPC","Gini","SS")], nsamps, "SPC")
-    adata[irow, "eineG"] <-get_similar_score(adata[irow,c("SPC","noSPC","Gini","SS")], nsamps, "SPC")
-    adata[irow, "iGenie"] <-get_dissimilar_score(adata[irow,c("SPC","noSPC","Gini","SS")], nsamps,"noSPC")
-    adata[irow, "eineGi"] <-get_similar_score(adata[irow,c("SPC","noSPC","Gini","SS")], nsamps,"noSPC")
+    spc<-adata[irow,"SPC"]
+    Gini <- get_Gini_coeff(sdata, nsamps)
+    SS <- get_signal_strength(sdata)
+    iGenie <-  (Gini/Gmax)^2 * SS
+    GS <- iGenie * spc
+    eineGi <- (1-(Gini/Gmax)^2) * SS
+    eineG <-eineGi * spc
+    
+    # append the scores to each vector
+    Ginis<-append(Ginis, Gini)
+    SSs<-append(SSs, SS)
+    iGenies<-append(iGenies, iGenie)
+    GSs<-append(GSs, GS)
+    eineGs<-append(eineGs, eineG)
+    eineGis<-append(eineGis, eineGi)
   }
-#               })
+  
+  # put the vectors into the data frame
+  adata["Gini"]<-Ginis
+  adata["SS"]<-SSs
+  adata["GS"]<-GSs
+  adata["eineG"]<-eineGs
+  adata["iGenie"]<-iGenies
+  adata["eineGi"]<-eineGis
+  
   return(adata)
 }
 
@@ -365,7 +399,7 @@ eineGi_dist <- function(adata) {
           colors=c("#3498db", "#c9c9d4") # blue, grey
   ) %>%
     layout(
-      title=list(text="<b>IsoOmniGenie Scores in Descending Order</b>", titlefont=ft),
+      title=list(text="<b>IsoOmniGenie Scores in Descending Order</b>", font=ft),
       xaxis=list(title="rank", titlefont=fa, showgrid=FALSE),
       yaxis=list(title="IsoOmniGenie Score", titlefont=fa, showgrid=FALSE),
       legend=list(x=0.7,y=0.9) # controls the location on the plot of the legend
