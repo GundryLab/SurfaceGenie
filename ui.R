@@ -442,9 +442,14 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
         tags$li( "Town J, et al. (2016) Exploring the surfaceome of Ewing sarcoma identifies a new and unique therapeutic target. Proc Natl Acad Sci U S A 113(13):3603-3608" ),
         tags$li( "Diaz-Ramos MC, Engel P, & Bastos R (2011) Towards a comprehensive human cell-surface immunome database. Immunol Lett 134(2):183-187.")
       )
+    ),
+    br(),
+    div(
+      h4("Users:"),
+      tags$script(type="text/javascript", id="clustrmaps", src="https://cdn.clustrmaps.com/map_v2.js?d=VJztTvZJUQlwpFCwOOYTSK6ktP0YBoNDEMPj1OS_ID0&cl=ffffff&w=a")
+      )
     )
-  )
-
+  
   ##########    Footer   ##########
 
 #  div(
