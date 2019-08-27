@@ -410,7 +410,7 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
     div(
       h4(span(class ="text-success", "Contact "), "Us!"),
       p("If you have questions or suggestions for additional features, please contact us by email:"),
-      p(class="text-info", style="text-indent:1.5em", "rgundry at mcw.edu"),
+      p(class="text-info", style="text-indent:1.5em", "rebekah.gundry at unmc.edu"),
       p("Additional cell surface-related information and tools can be found at our growing website:"),
       p(class="text-info", style="text-indent:1.5em", "www.cellsurfer.net")
     ),
