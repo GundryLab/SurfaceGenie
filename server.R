@@ -5,6 +5,7 @@ library(RColorBrewer)
 library(stringr)
 #library(ggplot2)
 library(svglite)
+library(xlsx)
 source("functions.R")
 `%then%` <- shiny:::`%OR%`
 
@@ -16,8 +17,20 @@ function(input, output, session) {
   # Load and process data
   data_input <- reactive({
     withProgress(message = 'Reading Data', value = 0, {
-      df <- read.csv(input$file1$datapath, header=TRUE)
+      parts <- strsplit(input$file1$name, "\\.")[[1]]
+      ext <- parts[length(parts)]
+      print(ext)
+      if(ext == "csv"){
+        df <- read.csv(input$file1$datapath, header=TRUE)
+      } else if(ext=="txt" || ext=="tsv" || ext=="tab") {
+        df <- read.delim(input$file1$datapath, header=TRUE)
+      } else if(ext=="xlsx" || ext=="xls") {
+        df <- read.xlsx(input$file1$datapath,  1)
+      } else {
+        validate(need(ext=="csv" || ext=="tsv" || ext=="xlsx" || ext=="xls" || ext=="tab" || ext=="txt", "You have the wrong file extension" ))
+      }
       input_size <- c(nrow(df), ncol(df))
+      validate(need(input_size[2]>2, "There are less than two columns.  Please make sure that you used the correct separator for your file type"))
       list(df, input_size)
     })
   })
@@ -408,8 +421,26 @@ function(input, output, session) {
   
   # Load and process data
   SPC_bulk_input <- reactive({
-    read.csv(input$file2$datapath, header=TRUE)
+    withProgress(message = 'Reading Data', value = 0, {
+      parts <- strsplit(input$file2$name, "\\.")[[1]]
+      ext <- parts[length(parts)]
+      if(ext == "csv"){
+        df <- read.csv(input$file2$datapath, header=TRUE)
+      } else if(ext=="txt" || ext=="tsv" || ext=="tab") {
+        df <- read.delim(input$file2$datapath, header=TRUE)
+      } else if(ext=="xlsx" || ext=="xls") {
+        df <- read.xlsx(input$file2$datapath,  1)
+      } else {
+        validate(need(ext=="csv" || ext=="tsv" || ext=="xlsx" || ext=="xls" || ext=="tab" || ext=="txt", "You have the wrong file extension" ))
+      }
+#      validate(need(ncol(df)==1, "There is more than one column. Please make sure that you used the correct separator for your file type"))
+      df
+    })
   })
+  
+  # SPC_bulk_input <- reactive({
+  #   read.csv(input$file2$datapath, header=TRUE)
+  # })
   SPC_bulk_output <- reactive({
     SPC_lookup(SPC_bulk_input())
   })

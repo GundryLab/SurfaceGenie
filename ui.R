@@ -68,19 +68,16 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
     "SurfaceGenie",
     sidebarPanel(
       h5(class="text-info", "Data Input"),
-      fileInput("file1", "Choose CSV File", multiple =FALSE, 
-                accept=c("text/csv",
-                         "text/comma-separated-values,text/plain",
-                         ".csv"),
+      fileInput("file1", "Choose Input File", multiple =FALSE, 
+                accept=c(".csv", ".tsv", ".txt", ".tab", ".xls", ".xlsx"), 
                 buttonLabel = "Browse...", placeholder = "No file selected"),
-
       h5(class="text-info", "Scoring Options"),
       #### regular GS
       #### GS, no SPC = iGenie
       #### GS reversed = eineG
       #### GS reversed, no SPC = eineGi
       checkboxGroupInput(
-        "scoring_opts", NULL,
+        "scoring_opts", label=NULL,
         choiceNames = list(
           "SurfaceGenie",
           "IsoGenie",
@@ -358,10 +355,8 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
                 rows=10),
       br(),
       h5(class="text-info", "Bulk Lookup"),
-      fileInput("file2", "Choose CSV File", multiple =FALSE, 
-                accept=c("text/csv",
-                         "text/comma-separated-values,text/plain",
-                         ".csv"),
+      fileInput("file2", "Choose Input File", multiple =FALSE, 
+                accept=c(".csv", ".tsv", ".txt", ".tab", ".xls", ".xlsx"),
                 buttonLabel = "Browse...", placeholder = "No file selected")
     ),
     mainPanel(
