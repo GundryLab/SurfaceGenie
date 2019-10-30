@@ -384,7 +384,37 @@ function(input, output, session) {
   )
   output$csv_dlbutton <- renderUI({
     req(input$file1)
-    downloadButton("csv_download", " .csv")
+    downloadButton("csv_download", " .csv", class="download_this")
+  })
+  
+  # Downloadable tsv of selected dataset
+  output$tsv_download <- downloadHandler(
+    filename = function() {
+      fname <- unlist(strsplit(as.character(input$file1), "[.]"))[1]
+      paste(fname, "_SurfaceGenie.tsv", sep = "")
+    },
+    content = function(filename) {
+      write.tsv(data_export()[[1]], filename, row.names = FALSE)
+    }
+  )
+  output$tsv_dlbutton <- renderUI({
+    req(input$file1)
+    downloadButton("tsv_download", " .tsv", class="download_this")
+  })
+
+  # Downloadable xlsx of selected dataset
+  output$xlsx_download <- downloadHandler(
+    filename = function() {
+      fname <- unlist(strsplit(as.character(input$file1), "[.]"))[1]
+      paste(fname, "_SurfaceGenie.xlsx", sep = "")
+    },
+    content = function(filename) {
+      write.xlsx(data_export()[[1]], filename, row.names = FALSE)
+    }
+  )
+  output$xlsx_dlbutton <- renderUI({
+    req(input$file1)
+    downloadButton("xlsx_download", " .xlsx", class="download_this")
   })
   
   ##########      SPC Quick Lookup      ##########
@@ -438,9 +468,6 @@ function(input, output, session) {
     })
   })
   
-  # SPC_bulk_input <- reactive({
-  #   read.csv(input$file2$datapath, header=TRUE)
-  # })
   SPC_bulk_output <- reactive({
     SPC_lookup(SPC_bulk_input())
   })

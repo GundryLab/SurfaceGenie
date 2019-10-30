@@ -278,7 +278,7 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
                       em(textOutput("output_size"))
                     ),
                     br(),
-                    uiOutput("csv_dlbutton")
+                    uiOutput("csv_dlbutton", class="download_this" ), uiOutput("tsv_dlbutton", class="download_this"), uiOutput("xlsx_dlbutton", class="download_this")
                   ),
                   tabPanel(
                     "Plots",

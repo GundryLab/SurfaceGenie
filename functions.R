@@ -430,7 +430,7 @@ SPC_lookup <- function(sdata) {
   else{
     Accession <- laply(laply(sdata[,1], as.character), split_acc_iso)
   }
-  SPC_scores <- read.csv(file="ref/SPC_by_Source.csv", header=TRUE)
+  SPC_scores <- read.csv(file="ref/SPC_by_Source_sprot.csv", header=TRUE)
   noiso <- data.frame(Accession)
   noiso_SPC <- join(noiso, SPC_scores, by="Accession", match="first")
   sdata["SPC"] <- noiso_SPC["SPC"]
@@ -451,7 +451,7 @@ SPC_lookup_for_export <- function(sdata) {
   else{
     Accession <- laply(laply(sdata[,1], as.character), split_acc_iso)
   }
-  SPC_scores <- read.csv(file="ref/SPC_by_Source.csv", header=TRUE)
+  SPC_scores <- read.csv(file="ref/SPC_by_Source_sprot.csv", header=TRUE)
   noiso <- data.frame(Accession)
   noiso_SPC <- join(noiso, SPC_scores, by="Accession", match="first")
   sdata["SPC"] <- noiso_SPC["SPC"]
