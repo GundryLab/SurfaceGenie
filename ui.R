@@ -186,9 +186,11 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
              "CD molecules",
              "Gene Name",
              "Number of CSPA experiments",
-             "UniProt Linkout"),
+             "UniProt Linkout", 
+             "Transmembrane",
+             "Subcellular Location"),
         choiceValues = list(
-          "HLA", "CD", "geneName", "CSPA #e", "UniProt Linkout")
+          "HLA", "CD", "geneName", "CSPA #e", "UniProt Linkout", "trans", "CC")
   )
 ),
     

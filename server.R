@@ -19,7 +19,6 @@ function(input, output, session) {
     withProgress(message = 'Reading Data', value = 0, {
       parts <- strsplit(input$file1$name, "\\.")[[1]]
       ext <- parts[length(parts)]
-      print(ext)
       if(ext == "csv"){
         df <- read.csv(input$file1$datapath, header=TRUE)
       } else if(ext=="txt" || ext=="tsv" || ext=="tab") {
@@ -384,7 +383,7 @@ function(input, output, session) {
   )
   output$csv_dlbutton <- renderUI({
     req(input$file1)
-    downloadButton("csv_download", " .csv", class="download_this")
+    downloadButton("csv_download", ".csv", class="download_this")
   })
   
   # Downloadable tsv of selected dataset
@@ -399,7 +398,7 @@ function(input, output, session) {
   )
   output$tsv_dlbutton <- renderUI({
     req(input$file1)
-    downloadButton("tsv_download", " .tsv", class="download_this")
+    downloadButton("tsv_download", ".tsv", class="download_this")
   })
 
   # Downloadable xlsx of selected dataset
@@ -408,13 +407,13 @@ function(input, output, session) {
       fname <- unlist(strsplit(as.character(input$file1), "[.]"))[1]
       paste(fname, "_SurfaceGenie.xlsx", sep = "")
     },
-    content = function(filename) {
+      content = function(filename) {
       write.xlsx(data_export()[[1]], filename, row.names = FALSE)
     }
   )
   output$xlsx_dlbutton <- renderUI({
     req(input$file1)
-    downloadButton("xlsx_download", " .xlsx", class="download_this")
+    downloadButton("xlsx_download", ".xlsx", class="download_this")
   })
   
   ##########      SPC Quick Lookup      ##########

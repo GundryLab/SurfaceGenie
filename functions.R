@@ -95,6 +95,34 @@ get_CD <- function(adata, Accession, species) {
   return(adata)
 }
 
+get_trans <- function(adata, Accession, species) {
+  if(species=="human") {
+    trans <- read.delim("ref/human.tab", header=TRUE)
+  } else if (species=="rat") {
+    trans <- read.delim("ref/rat.tab", header=TRUE)
+  } else if (species=="mouse") {
+    trans <- read.delim("ref/mouse.tab", header=TRUE)
+  }
+  df <- data.frame(Accession)
+  df <- join(df, trans, by="Accession", match="all")
+  adata["trans"] <- df["Transmembrane"]
+  return(adata)
+}
+
+get_loc <- function(adata, Accession, species) {
+  if(species=="human") {
+    CC <- read.delim("ref/human.tab", header=TRUE)
+  } else if (species=="rat") {
+    CC <- read.delim("ref/rat.tab", header=TRUE)
+  } else if (species=="mouse") {
+    CC <- read.delim("ref/mouse.tab", header=TRUE)
+  }
+  df <- data.frame(Accession)
+  df <- join(df, CC, by="Accession", match="all")
+  adata["CC"] <- df["CC"]
+  return(adata)
+}
+
 get_numCSPA <- function(adata, Accession) {
   CSPA <- read.csv("ref/CSPA.csv", header=TRUE)
   df <- data.frame(Accession)
@@ -145,10 +173,12 @@ SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupco
     reqcols <- colnames(adata)
   }
   
-  adata <- get_SPC(adata, accessions, species)
-  adata <- get_CD(adata, accessions, species)
-  adata <- get_HLA(adata, accessions, species)
-  adata <- get_geneName(adata, accessions, species)
+   adata <- get_SPC(adata, accessions, species)
+   adata <- get_CD(adata, accessions, species)
+  # adata <- get_HLA(adata, accessions, species)
+   adata <- get_geneName(adata, accessions, species)
+  # adata <- get_trans(adata, accessions, species)
+  # adata <- get_loc(adata, accessions, species)
 
   # rather than pulling apart and inserting into a data frame and 
   # calling functions to calculate the GS, iGenie, etc scores, we 
@@ -215,18 +245,27 @@ SG_export <- function(adata, exportvars1, exportvars2 , scoringvars, species) {
   
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
   reqcols <- colnames(adata)[1:(ncol(adata)-11)]
+  
+#  adata <- get_SPC(adata, accessions, species)
+#  adata <- get_CD(adata, accessions, species)
+  adata <- get_HLA(adata, accessions, species)
+#  adata <- get_geneName(adata, accessions, species)
+  adata <- get_trans(adata, accessions, species)
+  adata <- get_loc(adata, accessions, species)
+  
 
   # Export option: append uniprot linkout column
   if("UniProt Linkout" %in% exportvars2){
     adata <- append_UPL(adata, accessions)
   }
-  
+
   # Export option: append # CSPA experiments
   if("CSPA #e" %in% exportvars2){
     adata <- get_numCSPA(adata, accessions)
   }
+
   # Return data with export options as well as dataframe size
-  return(adata[,c(reqcols, exportvars1, exportvars2, scoringvars)])
+  return(adata[,c(reqcols, scoringvars, exportvars1, exportvars2)])
 }
 
 ##########  SurfaceGenie Plots  ##########
