@@ -26,10 +26,34 @@ function(input, output, session) {
       } else if(ext=="xlsx" || ext=="xls") {
         df <- read.xlsx(input$file1$datapath,  1)
       } else {
-        validate(need(ext=="csv" || ext=="tsv" || ext=="xlsx" || ext=="xls" || ext=="tab" || ext=="txt", "You have the wrong file extension" ))
+        validate(need(ext=="csv" || ext=="tsv" || ext=="xlsx" || ext=="xls" || ext=="tab" || ext=="txt", "You have the wrong file extension.  Please see the instructions for possible extensions and associated file types." ))
       }
+      
+      # validation
+      validate(
+        need(ncol(df)>1,"There is only one column of data.  This is probably caused by one of two things.  Either you used the wrong field delimiter - e.g. tabs instead of commas - or you need to enter one or more samples and their abundance data.")
+      )
+
+      # validation
+      validate(
+        need(ncol(df)>1,"There is only one column of data.  This is probably caused by one of two things.  Either you used the wrong field delimiter - e.g. tabs instead of commas - or you need to enter one or more samples and their abundance data."),
+        need(length(which(as.vector(sapply(df[2:3],is.numeric))==FALSE))==0,"There is a non-numeric value in the abundance data columns.  The first column should be accessions and each column after that should be numbers representing the abundance of the protein for that sample.  Please refer to the instructions for more help.")
+      )
+
+      ## look for duplicates and for NA values.  These errors will not stop the program, but we will inform the user.
+      # look for duplicates
+      warningMsg <- ""
+      e <- as.vector(df[duplicated(df),][,1])
+      if( length(e)>0 ){
+        warningMsg <- "You have duplicates in the list of accessions.  You may wish to address that."
+      }
+      # look for NA values.  This is not necessarily wrong, but want to make the user informed.
+      if(length(which(is.na(df)))>0) {
+        warningMsg <- c(warningMsg, "There are missing values in your data.  You may wish to address that.")
+      }
+      output$txtWarning<-renderText(warningMsg)
+
       input_size <- c(nrow(df), ncol(df))
-      validate(need(input_size[2]>2, "There are less than two columns.  Please make sure that you used the correct separator for your file type"))
       list(df, input_size)
     })
   })

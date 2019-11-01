@@ -195,6 +195,7 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
 ),
     
     mainPanel(
+      span(textOutput("txtWarning"), style="color:red"),
       tabsetPanel(type = "tabs",
                   tabPanel(
                     "Instructions",

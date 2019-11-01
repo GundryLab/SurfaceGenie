@@ -244,7 +244,7 @@ SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupco
 SG_export <- function(adata, exportvars1, exportvars2 , scoringvars, species) {
   
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
-  reqcols <- colnames(adata)[1:(ncol(adata)-11)]
+  reqcols <- colnames(adata)[1:(ncol(adata)-10)]
   
 #  adata <- get_SPC(adata, accessions, species)
 #  adata <- get_CD(adata, accessions, species)
