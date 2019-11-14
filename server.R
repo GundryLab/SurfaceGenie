@@ -16,6 +16,7 @@ function(input, output, session) {
   
   # Load and process data
   data_input <- reactive({
+#    print("data_input")
     withProgress(message = 'Reading Data', value = 0, {
       parts <- strsplit(input$file1$name, "\\.")[[1]]
       ext <- parts[length(parts)]
@@ -58,10 +59,28 @@ function(input, output, session) {
     })
   })
   
+
+  # Load annotation file
+  annotation <- reactive({
+#    print("Annotation")
+    withProgress(message = 'Reading Annotations', value = 0, {
+      if(input$species == "human") {
+        read.delim("ref/anno.tsv")
+      } else if(input$species == "rat") {
+        read.delim("ref/annotation.rat.tsv")
+      } else if(input$species == "mouse") {
+        read.delim("ref/annotation.mouse.tsv")
+      }
+    })
+  })
+    
+  
+  
   ##########  SurfaceGenie: Data Grouping  ##########
   
   data_output <- reactive({
 
+#    print("data_output")
     # setting up the progress meter
     progress<-shiny::Progress$new()
     progress$set(message = "Calculating Scores", value=0)
@@ -128,13 +147,13 @@ function(input, output, session) {
       }
       # call this if grouped
       SurfaceGenie(data_input()[[1]], input$processing_opts, 
-                   input$groupmethod, input$numgroups, groupcols, input$species, updateProgress)
+                   input$groupmethod, input$numgroups, groupcols, annotation(), updateProgress)
       
     }
     else{
       # call this if not grouped
       SurfaceGenie(data_input()[[1]], input$processing_opts, 
-                   groupmethod=NULL, numgroups=0, groupcols=NULL, input$species, updateProgress)
+                   groupmethod=NULL, numgroups=0, groupcols=NULL, annotation(), updateProgress)
     }
   })
   
@@ -142,7 +161,8 @@ function(input, output, session) {
   
   # Apply export options
   data_export <- reactive({
-    df <- SG_export(data_output(), input$export_options1, input$export_options2, input$scoring_opts, input$species)
+#    print("data_export")
+    df <- SG_export(data_output(), input$export_options1, input$export_options2, input$scoring_opts)
     names(df)[names(df) == "eineG"] <- "IsoGenie"
     names(df)[names(df) == "iGenie"] <- "OmniGenie"
     names(df)[names(df) == "eineGi"] <- "IsoOmniGenie"

@@ -77,7 +77,8 @@ group_samples <- function(adata, groupmethod, groupcols){
 
 append_UPL <- function(adata, Accession){
   baselink <- "https://www.uniprot.org/uniprot/"
-  adata["UniProt Linkout"] <- laply(Accession, function(x) { paste(baselink, x, sep="") })
+#  adata["UniProt Linkout"] <- laply(Accession, function(x) { paste(baselink, x, sep="") })
+  adata["UniProt Linkout"] <- laply(adata["noiso"], function(x) { paste(baselink, x, sep="") })
   return(adata)
 }
 
@@ -160,25 +161,39 @@ get_geneName <- function(adata, Accession, species) {
   return(adata)
 }
 
+
 ##########  Genie Score Main Function  ##########
 
-SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupcols, species, updateProgress) {
-  accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
+SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupcols, anno, updateProgress) {
+#  print("SurfaceGenie")
+#  adata["SPC"][is.na(adata["SPC"])]<-0
   nsamps <- ncol(adata) - 1
   reqcols <- colnames(adata)
+  adata["noiso"] <- laply(laply(adata["Accession"], as.character), split_acc_iso)
+#  print(nrow(adata))
+  final<-join(adata, anno, by="noiso", type="left", match="first")
+#  print(nrow(final))
+#  a<-adata["Accession"]
+#  b<-final["noiso"]
+#  print(a[!(a %in% b) ])
+  #  accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
   # Sample grouping
   if("grouping" %in% processing_opts & numgroups > 1){
     adata <- group_samples(adata, groupmethod, groupcols)
     nsamps <- numgroups
     reqcols <- colnames(adata)
   }
-  
-   adata <- get_SPC(adata, accessions, species)
-   adata <- get_CD(adata, accessions, species)
-  # adata <- get_HLA(adata, accessions, species)
-   adata <- get_geneName(adata, accessions, species)
-  # adata <- get_trans(adata, accessions, species)
-  # adata <- get_loc(adata, accessions, species)
+#  print(head(anno[1:3,1:8]))
+#  print(head(adata))
+#  adata<-join(adata, anno, by="Accession")
+#  print(nrow(adata))
+#  print(head(adata[1:3,1:10]))
+  #  adata <- get_SPC(adata, accessions, species)
+  #  adata <- get_CD(adata, accessions, species)
+  # # adata <- get_HLA(adata, accessions, species)
+  #  adata <- get_geneName(adata, accessions, species)
+  #  adata <- get_trans(adata, accessions, species)
+  #  adata <- get_loc(adata, accessions, species)
 
   # rather than pulling apart and inserting into a data frame and 
   # calling functions to calculate the GS, iGenie, etc scores, we 
@@ -196,11 +211,11 @@ SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupco
   iGenies<-vector(mode="logical",length=0)
   eineGis<-vector(mode="logical",length=0)
   
-  accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)  
+#  accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)  
   
   # loop through data set
   # update the progress meter
-  rows = nrow(adata)
+  rows = nrow(final)
   for(irow in 1:rows){
     if(irow%%100==0){
       if (is.function(updateProgress)) {
@@ -210,8 +225,8 @@ SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupco
     }
     
     #calculate the scores
-    sdata <- adata[irow, 2:(nsamps + 1)]
-    spc<-adata[irow,"SPC"]
+    sdata <- final[irow, 3:(nsamps + 2)]
+    spc <- final[irow,"SPC"]
     Gini <- get_Gini_coeff(sdata, nsamps)
     SS <- get_signal_strength(sdata)
     iGenie <-  (Gini/Gmax)^2 * SS
@@ -229,29 +244,48 @@ SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupco
   }
   
   # put the vectors into the data frame
-  adata["Gini"]<-Ginis
-  adata["SS"]<-SSs
-  adata["GS"]<-GSs
-  adata["eineG"]<-eineGs
-  adata["iGenie"]<-iGenies
-  adata["eineGi"]<-eineGis
+  final["Gini"]<-Ginis
+  final["SS"]<-SSs
+  final["GS"]<-GSs
+  final["eineG"]<-eineGs
+  final["iGenie"]<-iGenies
+  final["eineGi"]<-eineGis
   
-  return(adata)
+  return(final)
 }
 
 ##########  SurfaceGenie Export  ##########
 
-SG_export <- function(adata, exportvars1, exportvars2 , scoringvars, species) {
+SG_export <- function(adata, exportvars1, exportvars2 , scoringvars) {
+#  print("SG_export")
+#  print(colnames(adata))
+#  print(nrow(adata))
+  reqcols <- colnames(adata)[2:(ncol(adata)-13)]
+#  accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
+#  adata["noiso"] <- accessions
+#  final<-merge(adata, anno, by.x="noiso", by.y="Accession", type="left", match="first")
+#  adata["SPC"][is.na(adata["SPC"])]<-0
+  # # accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
+  # print(paste("start: ", nrow(adata)))
+  # reqcols <- colnames(adata)[1:(ncol(adata)-13)]
+  # noiso <- data.frame(accessions)
+  # colnames(noiso)[colnames(noiso)=="accessions"] <- "Accession"
+  # noiso_anno <- join(noiso, anno, by="Accession", type="left", match="first")
+  # print(paste("noiso_anno: ", nrow(noiso_anno)))
+  # a<-adata["Accession"]
+  # b<-noiso_anno["Accession"]  
+  # print(a[!(a %in% b) ])
+  # adata <- merge(adata, noiso_anno)  
+  # print(paste("adata: ", nrow(adata)))
+  # adata["SPC"][is.na(adata["SPC"])]<-0
+#  adata["noSPC"] <- matrix(rep(1, nrow(adata)))
   
-  accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
-  reqcols <- colnames(adata)[1:(ncol(adata)-10)]
-  
-#  adata <- get_SPC(adata, accessions, species)
-#  adata <- get_CD(adata, accessions, species)
-  adata <- get_HLA(adata, accessions, species)
-#  adata <- get_geneName(adata, accessions, species)
-  adata <- get_trans(adata, accessions, species)
-  adata <- get_loc(adata, accessions, species)
+# #  adata <- get_SPC(adata, accessions, species)
+# #  adata <- get_CD(adata, accessions, species)
+#   adata <- get_HLA(adata, accessions, species)
+# #  adata <- get_geneName(adata, accessions, species)
+# #  adata <- get_trans(adata, accessions, species)
+# #  adata <- get_loc(adata, accessions, species)
   
 
   # Export option: append uniprot linkout column
@@ -259,10 +293,10 @@ SG_export <- function(adata, exportvars1, exportvars2 , scoringvars, species) {
     adata <- append_UPL(adata, accessions)
   }
 
-  # Export option: append # CSPA experiments
-  if("CSPA #e" %in% exportvars2){
-    adata <- get_numCSPA(adata, accessions)
-  }
+  # # Export option: append # CSPA experiments
+  # if("CSPA #e" %in% exportvars2){
+  #   adata <- get_numCSPA(adata, accessions)
+  # }
 
   # Return data with export options as well as dataframe size
   return(adata[,c(reqcols, scoringvars, exportvars1, exportvars2)])

@@ -265,7 +265,7 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
              "Transmembrane",
              "Subcellular Location"),
         choiceValues = list(
-          "HLA", "CD", "geneName", "CSPA #e", "UniProt Linkout", "trans", "CC")
+          "HLA", "CD", "geneName", "CSPA..e", "UniProt Linkout", "Transmembrane", "CC")
   )
 ),
     
