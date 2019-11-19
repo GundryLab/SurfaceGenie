@@ -146,15 +146,20 @@ function(input, output, session) {
         groupcols[5] <- input$group5
       }
       # call this if grouped
-      SurfaceGenie(data_input()[[1]], input$processing_opts, 
+      sg<-SurfaceGenie(data_input()[[1]], input$processing_opts, 
                    input$groupmethod, input$numgroups, groupcols, annotation(), updateProgress)
       
     }
     else{
       # call this if not grouped
-      SurfaceGenie(data_input()[[1]], input$processing_opts, 
+      sg<-SurfaceGenie(data_input()[[1]], input$processing_opts, 
                    groupmethod=NULL, numgroups=0, groupcols=NULL, annotation(), updateProgress)
     }
+    if(length(which(as.vector(sapply(sg["SPC"],is.na))==TRUE))>0) {
+      warningMsg <- "There are accessions that do not belong to the organism you selected. They will be ignored for SurfaceGenie Score and IsoGenie Score. Download the csv file to find which ones."
+      output$txtWarning<-renderText(warningMsg)
+    }
+    return(sg)
   })
   
   ##########  SurfaceGenie: Output Display  ##########
@@ -437,7 +442,7 @@ function(input, output, session) {
       paste(fname, "_SurfaceGenie.tsv", sep = "")
     },
     content = function(filename) {
-      write.tsv(data_export()[[1]], filename, row.names = FALSE)
+      write.table(data_export()[[1]], filename, sep="\t", row.names = FALSE)
     }
   )
   output$tsv_dlbutton <- renderUI({
