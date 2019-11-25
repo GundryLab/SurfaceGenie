@@ -2,6 +2,9 @@
 library(shiny)
 library(plotly)
 
+scores <- c("GenieScore", "IsoGenie", "OmniGenie", "IsoOmniGenie")
+images <- c("gs.png", "isg.png", "og.png", "iog.png")
+
 shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
   
   ##########    Home    ##########
@@ -151,13 +154,16 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
       #### GS, no SPC = iGenie
       #### GS reversed = eineG
       #### GS reversed, no SPC = eineGi
+      
+      
       checkboxGroupInput(
         "scoring_opts", label=NULL,
-        choiceNames = list(
-          "SurfaceGenie",
-          "IsoGenie",
-          "OmniGenie",
-          "IsoOmniGenie"),
+        choiceNames = mapply(scores, images, FUN=function(score, imgloc) {
+          tagList(
+            score,
+            tags$img(src=imgloc, width=75)
+          )
+        }, SIMPLIFY = FALSE, USE.NAMES = FALSE),
         choiceValues = list(
           "GS", "eineG", "iGenie", "eineGi"),
           selected = list("GS")
