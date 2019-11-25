@@ -908,10 +908,19 @@ textarea {
   font-size: inherit;
   line-height: inherit;
 }
+
+/* Jack changed the hyperlink color here to blue from sea green */
 a {
+  color: #3498db;
+  text-decoration: none;
+}
+
+/*a {
   color: #18bc9c;
   text-decoration: none;
 }
+*/
+
 a:hover,
 a:focus {
   color: #18bc9c;

@@ -5,12 +5,14 @@ library(plotly)
 scores <- c("GenieScore", "IsoGenie", "OmniGenie", "IsoOmniGenie")
 images <- c("gs.png", "isg.png", "og.png", "iog.png")
 
-shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
+
+#shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
+shinyUI(navbarPage("", theme = "bootstrap.css",
   
   ##########    Home    ##########
   
   tabPanel(
-    "Home",
+    "Surface Genie",
     div(
      h4("Welcome to ", span(class ="text-success", "SurfaceGenie"),"!"),
      p(tags$i("Integrating predictive and empirical data for rational marker prioritization")),
@@ -143,7 +145,7 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
   ##########  SurfaceGenie ##########
   
   tabPanel(
-    "SurfaceGenie",
+    "GenieScore Calculator",
     sidebarPanel(
       h5(class="text-info", "Data Input"),
       fileInput("file1", "Choose Input File", multiple =FALSE, 
@@ -420,20 +422,6 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
     )
   ),
   
-  ##########    Contact   ##########
-  
-  tabPanel(
-    "Contact",
-    div(
-      h4(span(class ="text-success", "Contact "), "Us!"),
-      p("If you have questions or suggestions for additional features, please contact us by email:"),
-      p(class="text-info", style="text-indent:1.5em", "rebekah.gundry at unmc.edu"),
-      p("Additional cell surface-related information and tools can be found at our growing website:"),
-      p(class="text-info", style="text-indent:1.5em", "www.cellsurfer.net")
-    ),
-    br()
- ),
-
   ##########    References   ##########
   
   tabPanel(
@@ -465,7 +453,23 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
       h4("Users:"),
       tags$script(type="text/javascript", id="clustrmaps", src="https://cdn.clustrmaps.com/map_v2.js?d=VJztTvZJUQlwpFCwOOYTSK6ktP0YBoNDEMPj1OS_ID0&cl=ffffff&w=a")
       )
-    )
+    ),
+
+  ##########    Contact   ##########
+
+  tabPanel(
+  "Contact",
+  div(
+    h4(span(class ="text-success", "Contact "), "Us!"),
+    p("If you have questions or suggestions for additional features, please contact us by email:"),
+    p(class="text-info", style="text-indent:1.5em", "rebekah.gundry at unmc.edu"),
+    p("Additional cell surface-related information and tools can be found at our growing website:"),
+    p(class="text-info", style="text-indent:1.5em", "www.cellsurfer.net")
+  ),
+  br()
+)
+
+
   
   ##########    Footer   ##########
 
