@@ -154,8 +154,6 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
       #### GS, no SPC = iGenie
       #### GS reversed = eineG
       #### GS reversed, no SPC = eineGi
-      
-      
       checkboxGroupInput(
         "scoring_opts", label=NULL,
         choiceNames = mapply(scores, images, FUN=function(score, imgloc) {
@@ -174,9 +172,9 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
       radioButtons(
         "species", NULL,
         choices = list(
-          "human",
-          "rat",
-          "mouse"),
+          "Human",
+          "Rat",
+          "Mouse"),
         selected = list("human")
         #        choiceNames = NULL,
         #        choiceValues = NULL
@@ -267,11 +265,11 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
              "CD molecules",
              "Gene Name",
              "Number of CSPA experiments",
-             "UniProt Linkout", 
              "Transmembrane",
-             "Subcellular Location"),
+             "Subcellular Location",
+             "UniProt Linkout"),
         choiceValues = list(
-          "HLA", "CD", "geneName", "CSPA..e", "UniProt Linkout", "Transmembrane", "CC")
+          "HLA", "CD", "geneName", "CSPA..e", "Transmembrane", "CC", "UniProt Linkout")
   )
 ),
     
@@ -355,9 +353,9 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
   ##########  Surface Protein Concensus (SPC) Score  Lookup ##########
   
   tabPanel(
-    "SPC Score  Lookup",
+    "SPC Score Lookup",
     sidebarPanel(
-      h5(class="text-info", "Quick Lookup"),
+      h5(class="text-info", "Input Option 1"),
       textAreaInput("quicklookup", "Uniprot accession number:", 
                 placeholder="Enter accession numbers, each on a new line. For example:
                                                               
@@ -367,7 +365,7 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
                                         A1X283",
                 rows=10),
       br(),
-      h5(class="text-info", "Bulk Lookup"),
+      h5(class="text-info", "Input Option 2"),
       fileInput("file2", "Choose Input File", multiple =FALSE, 
                 accept=c(".csv", ".tsv", ".txt", ".tab", ".xls", ".xlsx"),
                 buttonLabel = "Browse...", placeholder = "No file selected")
