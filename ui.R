@@ -175,7 +175,7 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
           "Human",
           "Rat",
           "Mouse"),
-        selected = list("human")
+        selected = list("Human")
         #        choiceNames = NULL,
         #        choiceValues = NULL
       ),      
@@ -368,7 +368,18 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
       h5(class="text-info", "Input Option 2"),
       fileInput("file2", "Choose Input File", multiple =FALSE, 
                 accept=c(".csv", ".tsv", ".txt", ".tab", ".xls", ".xlsx"),
-                buttonLabel = "Browse...", placeholder = "No file selected")
+                buttonLabel = "Browse...", placeholder = "No file selected"),
+      h1(),
+      h5(class="text-info", "Species"),
+      radioButtons(
+        "species2", NULL,
+        choices = list(
+          "Human",
+          "Rat",
+          "Mouse"),
+        selected = list("Human")
+      )      
+      
     ),
     mainPanel(
       tabsetPanel(type = "tabs",
@@ -393,12 +404,12 @@ shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
                     p("With this method, the original upload file will be returned as a downloadable csv file which includes a column containing SPC Scores appended to the original input file.")
                   ),
                   tabPanel(
-                    "Quick Lookup",
+                    "Option 1",
                     plotOutput("SPC_quick_hist"),
                     tableOutput("SPC_quick_output")
                   ),
                   tabPanel(
-                    "Bulk Lookup",
+                    "Option 2",
                     plotOutput("SPC_bulk_hist"),
                     tableOutput("SPC_bulk_output"),
                     br(),

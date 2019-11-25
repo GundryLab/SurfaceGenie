@@ -64,11 +64,11 @@ function(input, output, session) {
   annotation <- reactive({
 #    print("Annotation")
     withProgress(message = 'Reading Annotations', value = 0, {
-      if(input$species == "human") {
+      if(input$species == "Human") {
         read.delim("ref/anno.tsv")
-      } else if(input$species == "rat") {
+      } else if(input$species == "Rat") {
         read.delim("ref/annotation.rat.tsv")
-      } else if(input$species == "mouse") {
+      } else if(input$species == "Mouse") {
         read.delim("ref/annotation.mouse.tsv")
       }
     })
@@ -481,7 +481,7 @@ function(input, output, session) {
     return(proteins)
   })
   SPC_quick_output <- reactive({
-    SPC_lookup(SPC_quick_input())
+    SPC_lookup(SPC_quick_input(), input$species2)
   })
   
   # Display data
@@ -517,10 +517,10 @@ function(input, output, session) {
   })
   
   SPC_bulk_output <- reactive({
-    SPC_lookup(SPC_bulk_input())
+    SPC_lookup(SPC_bulk_input(), input$species2)
   })
   SPC_bulk_output_for_export <- reactive({
-    SPC_lookup_for_export(SPC_bulk_input())
+    SPC_lookup_for_export(SPC_bulk_input(), input$species2)
   })
   
   # Display data

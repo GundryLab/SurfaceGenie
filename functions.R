@@ -496,28 +496,48 @@ eineGi_dist_export <- function(adata) {
 
 ##########  SPC Lookup  ##########
 
-SPC_lookup <- function(sdata) {
-  if("Accession" %in% colnames(sdata)){
-    Accession <- laply(laply(sdata["Accession"], as.character), split_acc_iso)
+SPC_lookup <- function(sdata, species) {
+  if( species == "Human") {
+    if("Accession" %in% colnames(sdata)){
+      Accession <- laply(laply(sdata["Accession"], as.character), split_acc_iso)
+    }
+    else{
+      Accession <- laply(laply(sdata[,1], as.character), split_acc_iso)
+    }
+    SPC_scores <- read.csv(file="ref/SPC_by_Source_sprot.csv", header=TRUE)
+    noiso <- data.frame(Accession)
+    noiso_SPC <- join(noiso, SPC_scores, by="Accession", match="first")
+    sdata["SPC"] <- noiso_SPC["SPC"]
+    sdata["SURFY"] <- noiso_SPC["SURFY"]
+    sdata["Town"] <- noiso_SPC["Town"]
+    sdata["Cunha"] <- noiso_SPC["Cunha"]
+    sdata["Diaz-Ramos"] <- noiso_SPC["Diaz.Ramos"]
+    sdata[,3:6][is.na(sdata[,3:6])] = " "
+    sdata[,3:6][sdata[,3:6]>0] = "\u00A0\u00A0\u00A0\u00A0\u00A0\u2713"
+    sdata[,3:6][sdata[,3:6]=="0"] = " "
+    return(sdata)
+  } else {
+    if("Accession" %in% colnames(sdata)){
+      Accession <- laply(laply(sdata["Accession"], as.character), split_acc_iso)
+    }
+    else{
+      Accession <- laply(laply(sdata[,1], as.character), split_acc_iso)
+    }
+    if(species == "Rat"){
+      SPC_scores <- read.csv(file="ref/Rat_SPC.csv", header=TRUE)
+    } else if(species == "Mouse"){
+      SPC_scores <- read.csv(file="ref/Mouse_SPC.csv", header=TRUE)
+    }
+    noiso <- data.frame(Accession)
+    noiso_SPC <- join(noiso, SPC_scores, by="Accession", match="first")
+    sdata["Human_Accession"] <- noiso_SPC["Human_Accession"]
+    sdata["SPC"] <- noiso_SPC["SPC"]
+    print(sdata)
+    return(sdata)
   }
-  else{
-    Accession <- laply(laply(sdata[,1], as.character), split_acc_iso)
-  }
-  SPC_scores <- read.csv(file="ref/SPC_by_Source_sprot.csv", header=TRUE)
-  noiso <- data.frame(Accession)
-  noiso_SPC <- join(noiso, SPC_scores, by="Accession", match="first")
-  sdata["SPC"] <- noiso_SPC["SPC"]
-  sdata["SURFY"] <- noiso_SPC["SURFY"]
-  sdata["Town"] <- noiso_SPC["Town"]
-  sdata["Cunha"] <- noiso_SPC["Cunha"]
-  sdata["Diaz-Ramos"] <- noiso_SPC["Diaz.Ramos"]
-  sdata[,3:6][is.na(sdata[,3:6])] = " "
-  sdata[,3:6][sdata[,3:6]>0] = "\u00A0\u00A0\u00A0\u00A0\u00A0\u2713"
-  sdata[,3:6][sdata[,3:6]=="0"] = " "
-  return(sdata)
 }
 
-SPC_lookup_for_export <- function(sdata) {
+SPC_lookup_for_export <- function(sdata, species) {
   if("Accession" %in% colnames(sdata)){
     Accession <- laply(laply(sdata["Accession"], as.character), split_acc_iso)
   }
