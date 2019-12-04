@@ -5,7 +5,7 @@ library(RColorBrewer)
 library(stringr)
 #library(ggplot2)
 library(svglite)
-library(xlsx)
+#library(xlsx)
 source("functions.R")
 `%then%` <- shiny:::`%OR%`
 
@@ -70,6 +70,8 @@ function(input, output, session) {
         read.delim("ref/annotation.rat.tsv")
       } else if(input$species == "Mouse") {
         read.delim("ref/annotation.mouse.tsv")
+      } else if(input$species == "Other/Ignore") {
+        read.delim("ref/annotation.none.tsv")
       }
     })
   })
@@ -167,10 +169,20 @@ function(input, output, session) {
   # Apply export options
   data_export <- reactive({
 #    print("data_export")
-    df <- SG_export(data_output(), input$export_options1, input$export_options2, input$scoring_opts)
-    names(df)[names(df) == "eineG"] <- "IsoGenie"
-    names(df)[names(df) == "iGenie"] <- "OmniGenie"
-    names(df)[names(df) == "eineGi"] <- "IsoOmniGenie"
+    if(input$species == "Human") {
+      df <- SG_export(data_output(), input$export_options1, input$export_options2h, input$scoring_opts)
+    } else if(input$species == "Rat") {
+      df <- SG_export(data_output(), input$export_options1, input$export_options2r, input$scoring_opts)
+    } else if(input$species == "Mouse") {
+      df <- SG_export(data_output(), input$export_options1, input$export_options2m, input$scoring_opts)
+    } else if(input$species == "Other/Ignore") {
+      df <- SG_export(data_output(), input$export_options1o, input$export_options2, input$scoring_opts_o)
+    }
+          
+          
+#    names(df)[names(df) == "eineG"] <- "IsoGenie"
+#    names(df)[names(df) == "iGenie"] <- "OmniGenie"
+#    names(df)[names(df) == "eineGi"] <- "IsoOmniGenie"
     output_size <- c(nrow(df), ncol(df))
     list(df, output_size)
   })
@@ -286,137 +298,137 @@ function(input, output, session) {
     downloadButton("SG_dist_SVGdl", " .svg", class="download_this")
   })
   
-  # eineG: reverse Genie Score plot
-  output$eineG_dist <- renderPlotly({
+  # IsoGenie: reverse Genie Score plot
+  output$IsoGenie_dist <- renderPlotly({
     req(input$file1)
-    eineG_dist(data_output())
+    IsoGenie_dist(data_output())
   })
   
-  output$eineG_dist_PNGdl <- downloadHandler(
+  output$IsoGenie_dist_PNGdl <- downloadHandler(
     filename = function() { 
       fname <- unlist(strsplit(as.character(input$file1), "[.]"))[1]
-      paste(fname, '_eineG_dist.png', sep='') 
+      paste(fname, '_IsoGenie_dist.png', sep='') 
     },
     content = function(file) {
       png(file,
           width=5*300,
           height=4*300,
           res=300)
-      #      eineG_dist(data_output())
-      eineG_dist_export(data_output())
+      #      IsoGenie_dist(data_output())
+      IsoGenie_dist_export(data_output())
       dev.off()
     }
   )
-  output$eineG_dist_PNGdlbutton <- renderUI({
+  output$IsoGenie_dist_PNGdlbutton <- renderUI({
     req(input$file1)
-    downloadButton("eineG_dist_PNGdl", " .png", class="download_this")
+    downloadButton("IsoGenie_dist_PNGdl", " .png", class="download_this")
   })
-  output$eineG_dist_SVGdl <- downloadHandler(
+  output$IsoGenie_dist_SVGdl <- downloadHandler(
     filename = function() { 
       fname <- unlist(strsplit(as.character(input$file1), "[.]"))[1]
-      paste(fname, '_eineG_dist.svg', sep='') 
+      paste(fname, '_IsoGenie_dist.svg', sep='') 
     },
     content = function(file) {
       svg(file,
           width=5,
           height=4,
           pointsize=10)
-      eineG_dist_export(data_output())
+      IsoGenie_dist_export(data_output())
       dev.off()
     }
   )
-  output$eineG_dist_SVGdlbutton <- renderUI({
+  output$IsoGenie_dist_SVGdlbutton <- renderUI({
     req(input$file1)
-    downloadButton("eineG_dist_SVGdl", " .svg", class="download_this")
+    downloadButton("IsoGenie_dist_SVGdl", " .svg", class="download_this")
   })
 
-  # iGenie: SurfaceGenie w/o SPC Score plot
-  output$iGenie_dist <- renderPlotly({
+  # OmniGenie: SurfaceGenie w/o SPC Score plot
+  output$OmniGenie_dist <- renderPlotly({
     req(input$file1)
-    iGenie_dist(data_output())
+    OmniGenie_dist(data_output())
   })
   
-  output$iGenie_dist_PNGdl <- downloadHandler(
+  output$OmniGenie_dist_PNGdl <- downloadHandler(
     filename = function() { 
       fname <- unlist(strsplit(as.character(input$file1), "[.]"))[1]
-      paste(fname, '_iGenie_dist.png', sep='') 
+      paste(fname, '_OmniGenie_dist.png', sep='') 
     },
     content = function(file) {
       png(file,
           width=5*300,
           height=4*300,
           res=300)
-      #      iGenie_dist(data_output())
-      iGenie_dist_export(data_output())
+      #      OmniGenie_dist(data_output())
+      OmniGenie_dist_export(data_output())
       dev.off()
     }
   )
-  output$iGenie_dist_PNGdlbutton <- renderUI({
+  output$OmniGenie_dist_PNGdlbutton <- renderUI({
     req(input$file1)
-    downloadButton("iGenie_dist_PNGdl", " .png", class="download_this")
+    downloadButton("OmniGenie_dist_PNGdl", " .png", class="download_this")
   })
-  output$iGenie_dist_SVGdl <- downloadHandler(
+  output$OmniGenie_dist_SVGdl <- downloadHandler(
     filename = function() { 
       fname <- unlist(strsplit(as.character(input$file1), "[.]"))[1]
-      paste(fname, '_iGenie_dist.svg', sep='') 
+      paste(fname, '_OmniGenie_dist.svg', sep='') 
     },
     content = function(file) {
       svg(file,
           width=5,
           height=4,
           pointsize=10)
-      iGenie_dist_export(data_output())
+      OmniGenie_dist_export(data_output())
       dev.off()
     }
   )
-  output$iGenie_dist_SVGdlbutton <- renderUI({
+  output$OmniGenie_dist_SVGdlbutton <- renderUI({
     req(input$file1)
-    downloadButton("iGenie_dist_SVGdl", " .svg", class="download_this")
+    downloadButton("OmniGenie_dist_SVGdl", " .svg", class="download_this")
   })
   
   
-  # eineGi: Similarity w/o SPC score plot
-  output$eineGi_dist <- renderPlotly({
+  # IsoOmniGenie: Similarity w/o SPC score plot
+  output$IsoOmniGenie_dist <- renderPlotly({
     req(input$file1)
-    eineGi_dist(data_output())
+    IsoOmniGenie_dist(data_output())
   })
   
-  output$eineGi_dist_PNGdl <- downloadHandler(
+  output$IsoOmniGenie_dist_PNGdl <- downloadHandler(
     filename = function() { 
       fname <- unlist(strsplit(as.character(input$file1), "[.]"))[1]
-      paste(fname, '_eineGi_dist.png', sep='') 
+      paste(fname, '_IsoOmniGenie_dist.png', sep='') 
     },
     content = function(file) {
       png(file,
           width=5*300,
           height=4*300,
           res=300)
-      #      eineGi_dist(data_output())
-      eineGi_dist_export(data_output())
+      #      IsoOmniGenie_dist(data_output())
+      IsoOmniGenie_dist_export(data_output())
       dev.off()
     }
   )
-  output$eineGi_dist_PNGdlbutton <- renderUI({
+  output$IsoOmniGenie_dist_PNGdlbutton <- renderUI({
     req(input$file1)
-    downloadButton("eineGi_dist_PNGdl", " .png", class="download_this")
+    downloadButton("IsoOmniGenie_dist_PNGdl", " .png", class="download_this")
   })
-  output$eineGi_dist_SVGdl <- downloadHandler(
+  output$IsoOmniGenie_dist_SVGdl <- downloadHandler(
     filename = function() { 
       fname <- unlist(strsplit(as.character(input$file1), "[.]"))[1]
-      paste(fname, '_eineGi_dist.svg', sep='') 
+      paste(fname, '_IsoOmniGenie_dist.svg', sep='') 
     },
     content = function(file) {
       svg(file,
           width=5,
           height=4,
           pointsize=10)
-      eineGi_dist_export(data_output())
+      IsoOmniGenie_dist_export(data_output())
       dev.off()
     }
   )
-  output$eineGi_dist_SVGdlbutton <- renderUI({
+  output$IsoOmniGenie_dist_SVGdlbutton <- renderUI({
     req(input$file1)
-    downloadButton("eineGi_dist_SVGdl", " .svg", class="download_this")
+    downloadButton("IsoOmniGenie_dist_SVGdl", " .svg", class="download_this")
   })
   
 

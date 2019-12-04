@@ -167,11 +167,25 @@ get_geneName <- function(adata, Accession, species) {
 SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupcols, anno, updateProgress) {
 #  print("SurfaceGenie")
 #  adata["SPC"][is.na(adata["SPC"])]<-0
+#  print(colnames(adata))
   nsamps <- ncol(adata) - 1
   reqcols <- colnames(adata)
   adata["noiso"] <- laply(laply(adata["Accession"], as.character), split_acc_iso)
 #  print(nrow(adata))
-  final<-join(adata, anno, by="noiso", type="left", match="first")
+   print("colnames adata")
+   print(colnames(adata))
+   print("colnames anno")
+   print(colnames(anno))
+   print("rows adata")
+   print(nrow(adata))
+   print("rows anno")
+  print(nrow(anno))
+  # if(is.null(anno)){
+  #   final<-adata
+  #   final["SPC"]<-rep(1,nrow(final))
+  # } else {
+     final<-join(adata, anno, by="noiso", type="left", match="first")
+  # }
 #  print(nrow(final))
 #  a<-adata["Accession"]
 #  b<-final["noiso"]
@@ -196,7 +210,7 @@ SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupco
   #  adata <- get_loc(adata, accessions, species)
 
   # rather than pulling apart and inserting into a data frame and 
-  # calling functions to calculate the GS, iGenie, etc scores, we 
+  # calling functions to calculate the GS, OmniGenie, etc scores, we 
   # will calculate them directly, drop them into a vector then
   # finally add the vectors to the data frame.  This has reduced 
   # the time for a 3700 line file from 14 secs to 3 (including the
@@ -207,14 +221,16 @@ SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupco
   Ginis<-vector(mode="logical",length=0)
   SSs<-vector(mode="logical",length=0)
   GSs<-vector(mode="logical",length=0)
-  eineGs<-vector(mode="logical",length=0)
-  iGenies<-vector(mode="logical",length=0)
-  eineGis<-vector(mode="logical",length=0)
+  IsoGenies<-vector(mode="logical",length=0)
+  OmniGenies<-vector(mode="logical",length=0)
+  IsoOmniGenies<-vector(mode="logical",length=0)
   
 #  accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)  
   
   # loop through data set
   # update the progress meter
+#  print(colnames(final))
+#  print(final[2, 3:(nsamps + 2)])
   rows = nrow(final)
   for(irow in 1:rows){
     if(irow%%100==0){
@@ -225,42 +241,74 @@ SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupco
     }
     
     #calculate the scores
-    sdata <- final[irow, 3:(nsamps + 2)]
+#    if(!is.null(anno)){
+      sdata <- final[irow, 3:(nsamps + 2)]
+#    } else {
+#      sdata <- final[irow, 2:(nsamps + 1)]  
+#    }
     spc <- final[irow,"SPC"]
     Gini <- get_Gini_coeff(sdata, nsamps)
     SS <- get_signal_strength(sdata)
-    iGenie <-  (Gini/Gmax)^2 * SS
-    GS <- iGenie * spc
-    eineGi <- (1-(Gini/Gmax)^2) * SS
-    eineG <-eineGi * spc
-    
+    OmniGenie <-  (Gini/Gmax)^2 * SS
+    IsoOmniGenie <- (1-(Gini/Gmax)^2) * SS
+    GS <- OmniGenie * spc
+    IsoGenie <-IsoOmniGenie * spc
     # append the scores to each vector
     Ginis<-append(Ginis, Gini)
     SSs<-append(SSs, SS)
-    iGenies<-append(iGenies, iGenie)
+    OmniGenies<-append(OmniGenies, OmniGenie)
+    IsoOmniGenies<-append(IsoOmniGenies, IsoOmniGenie)
     GSs<-append(GSs, GS)
-    eineGs<-append(eineGs, eineG)
-    eineGis<-append(eineGis, eineGi)
+    IsoGenies<-append(IsoGenies, IsoGenie)
   }
   
   # put the vectors into the data frame
   final["Gini"]<-Ginis
   final["SS"]<-SSs
+  final["OmniGenie"]<-OmniGenies
+  final["IsoOmniGenie"]<-IsoOmniGenies
   final["GS"]<-GSs
-  final["eineG"]<-eineGs
-  final["iGenie"]<-iGenies
-  final["eineGi"]<-eineGis
-  
+  final["IsoGenie"]<-IsoGenies
   return(final)
 }
 
 ##########  SurfaceGenie Export  ##########
 
 SG_export <- function(adata, exportvars1, exportvars2 , scoringvars) {
+#  no_exportvars1 <- list("SPC")
+#  no_exportvars2 <- list("HLA", "CD", "geneName", "CSPA..e", "Transmembrane", "CC", "UniProt Linkout")
+#  no_scoringvars <-list("GS", "IsoGenie")
 #  print("SG_export")
 #  print(colnames(adata))
 #  print(nrow(adata))
-  reqcols <- colnames(adata)[2:(ncol(adata)-13)]
+#  print(length(exportvars1))
+#  print(length(exportvars2))
+#  print(length(scoringvars))
+#  print(colnames(adata))
+#  cols <- length(exportvars1) + length(exportvars2) + length(scoringvars)
+#  cols <- ncol(adata)-length(exportvars1)-length(exportvars2)-length(scoringvars)
+  print("SG_Export, columns in dataset")
+  print(colnames(adata))
+  print(ncol(adata))
+#  if(ncol(adata)<10){
+#    reqcols <- colnames(adata)[1:(ncol(adata)-6)]
+#  } else {
+    reqcols <- colnames(adata)[2:(ncol(adata)-13)]
+#  }
+  print("reqcols, exportvars1, exportvars2, scoringvars")
+  print(reqcols)
+  print(exportvars1)
+  print(exportvars2)
+  print(scoringvars)
+  # if(ncol(adata)<10){
+  #   exportvars1 <- exportvars1[!exportvars1 %in% no_exportvars1]
+  #   exportvars2 <- exportvars2[!exportvars2 %in% no_exportvars2]
+  #   scoringvars <- scoringvars[!scoringvars %in% no_scoringvars]
+  #   print(reqcols)
+  #   print(exportvars1)
+  #   print(exportvars2)
+  #   print(scoringvars)
+  # }
 #  accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
 #  adata["noiso"] <- accessions
 #  final<-merge(adata, anno, by.x="noiso", by.y="Accession", type="left", match="first")
@@ -357,10 +405,10 @@ SG_dist_export <- function(adata) {
          inset=0.02, box.lwd=0)
 }
 
-eineG_dist <- function(adata) {
+IsoGenie_dist <- function(adata) {
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
-  adata <- adata[,c("Accession", "geneName", "eineG", "CD")]
-  adata <- adata[order(-adata$eineG),]
+  adata <- adata[,c("Accession", "geneName", "IsoGenie", "CD")]
+  adata <- adata[order(-adata$IsoGenie),]
   CD <- adata[,"CD"]
   df = data.frame(CD)
   df$CD<-as.character(df$CD)
@@ -371,12 +419,12 @@ eineG_dist <- function(adata) {
   ft<-list(family="Arial, sans-serif", size=14, color='black')
   plot_ly(data=adata,
           x=~1:nrow(adata),
-          y=~eineG, 
+          y=~IsoGenie, 
           type = 'scatter', 
           mode='markers', 
           hoverinfo = 'text', 
           hoverlabel = list(bgcolor='white'),
-          text=paste("Gene Name: ", adata$geneName, "<br>Accession: ", adata$Accession, "<br>CD: ", adata$CD, "<br>IsoGenieScore: ", adata$eineG, "<br>Rank: ", 1:nrow(adata)), 
+          text=paste("Gene Name: ", adata$geneName, "<br>Accession: ", adata$Accession, "<br>CD: ", adata$CD, "<br>IsoGenieScore: ", adata$IsoGenie, "<br>Rank: ", 1:nrow(adata)), 
           color=~isCD,
           colors=c("#3498db", "#c9c9d4") # blue, grey
   ) %>%
@@ -388,13 +436,13 @@ eineG_dist <- function(adata) {
     )
 }
 
-eineG_dist_export <- function(adata) {
+IsoGenie_dist_export <- function(adata) {
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
-  adata <- adata[,c("eineG", "CD")]
-  adata <- adata[order(-adata$eineG),]
-  CD <- adata[,"eineG"]
+  adata <- adata[,c("IsoGenie", "CD")]
+  adata <- adata[order(-adata$IsoGenie),]
+  CD <- adata[,"IsoGenie"]
   CD[is.na(adata[,"CD"])] <- NA
-  plot(1:nrow(adata), adata[,"eineG"], xlab="rank", ylab="IsoGenie Score", 
+  plot(1:nrow(adata), adata[,"IsoGenie"], xlab="rank", ylab="IsoGenie Score", 
        main="IsoGenie Scores in Descending Order",
        col="#C0C0C0")
   points(1:nrow(adata), CD, pch=16, col="#3498db")
@@ -402,10 +450,10 @@ eineG_dist_export <- function(adata) {
          inset=0.02, box.lwd=0)
 }
 
-iGenie_dist <- function(adata) {
+OmniGenie_dist <- function(adata) {
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
-  adata <- adata[,c("Accession", "geneName", "iGenie", "CD")]
-  adata <- adata[order(-adata$iGenie),]
+  adata <- adata[,c("Accession", "geneName", "OmniGenie", "CD")]
+  adata <- adata[order(-adata$OmniGenie),]
   CD <- adata[,"CD"]
   df = data.frame(CD)
   df$CD<-as.character(df$CD)
@@ -416,12 +464,12 @@ iGenie_dist <- function(adata) {
   ft<-list(family="Arial, sans-serif", size=14, color='black')
   plot_ly(data=adata,
           x=~1:nrow(adata),
-          y=~iGenie, 
+          y=~OmniGenie, 
           type = 'scatter', 
           mode='markers', 
           hoverinfo = 'text', 
           hoverlabel = list(bgcolor='white'),
-          text=paste("Gene Name: ", adata$geneName, "<br>Accession: ", adata$Accession, "<br>CD: ", adata$CD, "<br>OmniGenieScore: ", adata$iGenie, "<br>Rank: ", 1:nrow(adata)), 
+          text=paste("Gene Name: ", adata$geneName, "<br>Accession: ", adata$Accession, "<br>CD: ", adata$CD, "<br>OmniGenieScore: ", adata$OmniGenie, "<br>Rank: ", 1:nrow(adata)), 
           color=~isCD,
           colors=c("#3498db", "#c9c9d4") # blue, grey
   ) %>%
@@ -433,13 +481,13 @@ iGenie_dist <- function(adata) {
     )
 }
 
-iGenie_dist_export <- function(adata) {
+OmniGenie_dist_export <- function(adata) {
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
-  adata <- adata[,c("iGenie", "CD")]
-  adata <- adata[order(-adata$iGenie),]
-  CD <- adata[,"iGenie"]
+  adata <- adata[,c("OmniGenie", "CD")]
+  adata <- adata[order(-adata$OmniGenie),]
+  CD <- adata[,"OmniGenie"]
   CD[is.na(adata[,"CD"])] <- NA
-  plot(1:nrow(adata), adata[,"iGenie"], xlab="rank", ylab="OmniGenie Score", 
+  plot(1:nrow(adata), adata[,"OmniGenie"], xlab="rank", ylab="OmniGenie Score", 
        main="OmniGenie Scores in Descending Order",
        col="#C0C0C0")
   points(1:nrow(adata), CD, pch=16, col="#3498db")
@@ -448,10 +496,10 @@ iGenie_dist_export <- function(adata) {
 }
 
 
-eineGi_dist <- function(adata) {
+IsoOmniGenie_dist <- function(adata) {
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
-  adata <- adata[,c("Accession", "geneName", "eineGi", "CD")]
-  adata <- adata[order(-adata$eineGi),]
+  adata <- adata[,c("Accession", "geneName", "IsoOmniGenie", "CD")]
+  adata <- adata[order(-adata$IsoOmniGenie),]
   CD <- adata[,"CD"]
   df = data.frame(CD)
   df$CD<-as.character(df$CD)
@@ -462,12 +510,12 @@ eineGi_dist <- function(adata) {
   ft<-list(family="Arial, sans-serif", size=14, color='black')
   plot_ly(data=adata,
           x=~1:nrow(adata),
-          y=~eineGi, 
+          y=~IsoOmniGenie, 
           type = 'scatter', 
           mode='markers', 
           hoverinfo = 'text', 
           hoverlabel = list(bgcolor='white'),
-          text=paste("Gene Name: ", adata$geneName, "<br>Accession: ", adata$Accession, "<br>CD: ", adata$CD, "<br>IsoOmniGenieScore: ", adata$eineGi, "<br>Rank: ", 1:nrow(adata)), 
+          text=paste("Gene Name: ", adata$geneName, "<br>Accession: ", adata$Accession, "<br>CD: ", adata$CD, "<br>IsoOmniGenieScore: ", adata$IsoOmniGenie, "<br>Rank: ", 1:nrow(adata)), 
           color=~isCD,
           colors=c("#3498db", "#c9c9d4") # blue, grey
   ) %>%
@@ -479,13 +527,13 @@ eineGi_dist <- function(adata) {
     )
 }
 
-eineGi_dist_export <- function(adata) {
+IsoOmniGenie_dist_export <- function(adata) {
   accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
-  adata <- adata[,c("eineGi", "CD")]
-  adata <- adata[order(-adata$eineGi),]
-  CD <- adata[,"eineGi"]
+  adata <- adata[,c("IsoOmniGenie", "CD")]
+  adata <- adata[order(-adata$IsoOmniGenie),]
+  CD <- adata[,"IsoOmniGenie"]
   CD[is.na(adata[,"CD"])] <- NA
-  plot(1:nrow(adata), adata[,"eineGi"], xlab="rank", ylab="IsoOmns Score", 
+  plot(1:nrow(adata), adata[,"IsoOmniGenie"], xlab="rank", ylab="IsoOmns Score", 
        main="IsoOmniGenie Scores in Descending Order",
        col="#C0C0C0")
   points(1:nrow(adata), CD, pch=16, col="#3498db")
@@ -532,7 +580,7 @@ SPC_lookup <- function(sdata, species) {
     noiso_SPC <- join(noiso, SPC_scores, by="Accession", match="first")
     sdata["Human_Accession"] <- noiso_SPC["Human_Accession"]
     sdata["SPC"] <- noiso_SPC["SPC"]
-    print(sdata)
+#    print(sdata)
     return(sdata)
   }
 }

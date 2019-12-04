@@ -156,19 +156,38 @@ shinyUI(navbarPage("", theme = "bootstrap.css",
       #### GS, no SPC = iGenie
       #### GS reversed = eineG
       #### GS reversed, no SPC = eineGi
-      checkboxGroupInput(
-        "scoring_opts", label=NULL,
-        choiceNames = mapply(scores, images, FUN=function(score, imgloc) {
-          tagList(
-            score,
-            tags$img(src=imgloc, width=75)
-          )
-        }, SIMPLIFY = FALSE, USE.NAMES = FALSE),
+      conditionalPanel(
+        condition = "input.species!='Other/Ignore'",
+        checkboxGroupInput(
+          "scoring_opts", label=NULL,
+          choiceNames = mapply(scores, images, FUN=function(score, imgloc) {
+            tagList(
+              score,
+              tags$img(src=imgloc, width=75)
+            )
+          }, SIMPLIFY = FALSE, USE.NAMES = FALSE),
         choiceValues = list(
-          "GS", "eineG", "iGenie", "eineGi"),
-          selected = list("GS")
+#          "GS", "eineG", "iGenie", "eineGi"),
+#        selected = list("GS")
+        "GS", "IsoGenie", "OmniGenie", "IsoOmniGenie")
+        )
       ),
-
+      conditionalPanel(
+        condition = "input.species=='Other/Ignore'",
+        checkboxGroupInput(
+          "scoring_opts_o", label=NULL,
+          choiceNames = mapply(scores[c(3,4)], images[c(3,4)], FUN=function(score, imgloc) {
+            tagList(
+              score,
+              tags$img(src=imgloc, width=75)
+            )
+          }, SIMPLIFY = FALSE, USE.NAMES = FALSE),
+          choiceValues = list(
+#            "iGenie", "eineGi"),
+#          selected = list("GS")
+          "OmniGenie", "IsoOmniGenie")
+      )
+      ),
       h1(),
       h5(class="text-info", "Species"),
       radioButtons(
@@ -176,7 +195,8 @@ shinyUI(navbarPage("", theme = "bootstrap.css",
         choices = list(
           "Human",
           "Rat",
-          "Mouse"),
+          "Mouse",
+          "Other/Ignore"),
         selected = list("Human")
         #        choiceNames = NULL,
         #        choiceValues = NULL
@@ -249,7 +269,9 @@ shinyUI(navbarPage("", theme = "bootstrap.css",
 
       h1(),
       h5(class="text-info", "Export Options (CSV Download Tab)"),
-      checkboxGroupInput(
+      conditionalPanel(
+        condition = "input.species!='Other/Ignore'",
+        checkboxGroupInput(
         'export_options1', "SurfaceGenie Components:",
         choiceNames = list(
           "SPC score (SPC)",
@@ -257,11 +279,29 @@ shinyUI(navbarPage("", theme = "bootstrap.css",
           "Signal strength (SS)"
         ),
         choiceValues = list(
-          "SPC", "Gini", "SS"),
-        selected = list("GS")
+#          "SPC", "Gini", "SS"),
+#        selected = list("GS")
+        "SPC", "Gini", "SS")
+      )
       ),
-      checkboxGroupInput(
-        'export_options2', "Annotations / Link outs:",
+      conditionalPanel(
+        condition = "input.species=='Other/Ignore'",
+        checkboxGroupInput(
+          'export_options1o', "SurfaceGenie Components:",
+          choiceNames = list(
+            "Gini coefficient (Gini)",
+            "Signal strength (SS)"
+          ),
+          choiceValues = list(
+#            "Gini", "SS"),
+#          selected = list("GS")
+          "Gini", "SS")
+        )
+      ),
+      conditionalPanel(
+        condition = "input.species=='Human'",
+        checkboxGroupInput(
+        'export_options2h', "Annotations / Link outs:",
         choiceNames = list(
              "HLA molecules",
              "CD molecules",
@@ -272,8 +312,39 @@ shinyUI(navbarPage("", theme = "bootstrap.css",
              "UniProt Linkout"),
         choiceValues = list(
           "HLA", "CD", "geneName", "CSPA..e", "Transmembrane", "CC", "UniProt Linkout")
+        )
+  ),
+  conditionalPanel(
+    condition = "input.species=='Rat'",
+    checkboxGroupInput(
+      'export_options2r', "Annotations / Link outs:",
+      choiceNames = list(
+        "CD molecules",
+        "Gene Name",
+        "Transmembrane",
+        "Subcellular Location",
+        "UniProt Linkout"),
+      choiceValues = list(
+         "CD", "geneName", "Transmembrane", "CC", "UniProt Linkout")
+    )
+  ),
+  conditionalPanel(
+    condition = "input.species=='Mouse'",
+    checkboxGroupInput(
+      'export_options2m', "Annotations / Link outs:",
+      choiceNames = list(
+        "CD molecules",
+        "Gene Name",
+        "Number of CSPA experiments",
+        "Transmembrane",
+        "Subcellular Location",
+        "UniProt Linkout"),
+      choiceValues = list(
+        "CD", "geneName", "CSPA..e", "Transmembrane", "CC", "UniProt Linkout")
+    )
   )
-),
+  
+    ),
     
     mainPanel(
       span(textOutput("txtWarning"), style="color:red"),
@@ -295,16 +366,19 @@ shinyUI(navbarPage("", theme = "bootstrap.css",
                   ),
                   tabPanel(
                     "Plots",
-                    plotOutput("SG_SPC_hist"),
-                    div(class="bnav",
-                    uiOutput("SG_SPC_hist_PNGdlbutton", class="download_this"),
-                    uiOutput("SG_SPC_hist_SVGdlbutton", class="download_this")),
-                    p(),
-                    br(),
-                    br(),
-                    br(),
                     conditionalPanel(
-                      condition = "input.scoring_opts.indexOf('GS')>-1",
+                      condition = "input.species!='Other/Ignore'",
+                      plotOutput("SG_SPC_hist"),
+                      div(class="bnav",
+                      uiOutput("SG_SPC_hist_PNGdlbutton", class="download_this"),
+                      uiOutput("SG_SPC_hist_SVGdlbutton", class="download_this")),
+                      p(),
+                      br(),
+                      br(),
+                      br()
+                    ),
+                    conditionalPanel(
+                      condition = "input.species!='Other/Ignore'&input.scoring_opts.indexOf('GS')>-1",
                       plotlyOutput("SG_dist"),
                       div(class="bnav",
                       uiOutput("SG_dist_PNGdlbutton", class="download_this"),
@@ -314,37 +388,37 @@ shinyUI(navbarPage("", theme = "bootstrap.css",
                       br(),
                       br()
                     ),
-                    #eineG
+                    #IsoGenie
                     conditionalPanel(
-                      condition = "input.scoring_opts.indexOf('eineG')>-1",
-                      plotlyOutput("eineG_dist"),
+                      condition = "input.species!='Other/Ignore'&input.scoring_opts.indexOf('IsoGenie')>-1",
+                      plotlyOutput("IsoGenie_dist"),
                       div(class="bnav",
-                      uiOutput("eineG_dist_PNGdlbutton", class="download_this"),
-                      uiOutput("eineG_dist_SVGdlbutton", class="download_this")),
+                      uiOutput("IsoGenie_dist_PNGdlbutton", class="download_this"),
+                      uiOutput("IsoGenie_dist_SVGdlbutton", class="download_this")),
                       p(),
                       br(),
                       br(),
                       br()
                     ),
-                    #iGenie
+                    #OmniGenie
                     conditionalPanel(
-                      condition = "input.scoring_opts.indexOf('iGenie')>-1",
-                      plotlyOutput("iGenie_dist"),
+                      condition = "(input.species!='Other/Ignore'&input.scoring_opts.indexOf('OmniGenie')>-1)|(input.species=='Other/Ignore'&input.scoring_opts_o.indexOf('OmniGenie')>-1)",
+                      plotlyOutput("OmniGenie_dist"),
                       div(class="bnav",
-                      uiOutput("iGenie_dist_PNGdlbutton", class="download_this"),
-                      uiOutput("iGenie_dist_SVGdlbutton", class="download_this")),
+                      uiOutput("OmniGenie_dist_PNGdlbutton", class="download_this"),
+                      uiOutput("OmniGenie_dist_SVGdlbutton", class="download_this")),
                       p(),
                       br(),
                       br(),
                       br()
                     ),
-                    #eineGi
+                    #IsoOmniGenie
                     conditionalPanel(
-                      condition = "input.scoring_opts.indexOf('eineGi')>-1",
-                      plotlyOutput("eineGi_dist"),
+                      condition = "(input.species!='Other/Ignore'&input.scoring_opts.indexOf('IsoOmniGenie')>-1)|(input.species=='Other/Ignore'&input.scoring_opts_o.indexOf('IsoOmniGenie')>-1)",
+                      plotlyOutput("IsoOmniGenie_dist"),
                       div(class="bnav",
-                      uiOutput("eineGi_dist_PNGdlbutton", class="download_this"),
-                      uiOutput("eineGi_dist_SVGdlbutton", class="download_this")),
+                      uiOutput("IsoOmniGenie_dist_PNGdlbutton", class="download_this"),
+                      uiOutput("IsoOmniGenie_dist_SVGdlbutton", class="download_this")),
                       br()
                     )
                   )
