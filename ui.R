@@ -350,19 +350,9 @@ shinyUI(navbarPage("", theme = "bootstrap.css",
       span(textOutput("txtWarning"), style="color:red"),
       tabsetPanel(type = "tabs",
                   tabPanel(
-                    "Data Input",
+                    "Data Preview",
                     tableOutput("data_input"),
                     em(textOutput("input_size"))
-                  ),
-                  tabPanel(
-                    "CSV Download", 
-                    tableOutput("data_output"),
-                    conditionalPanel(
-                      condition = "output.data_output != undefined",
-                      em(textOutput("output_size"))
-                    ),
-                    br(),
-                    uiOutput("csv_dlbutton", class="download_this" ), uiOutput("tsv_dlbutton", class="download_this"), uiOutput("xlsx_dlbutton", class="download_this")
                   ),
                   tabPanel(
                     "Plots",
@@ -421,7 +411,18 @@ shinyUI(navbarPage("", theme = "bootstrap.css",
                       uiOutput("IsoOmniGenie_dist_SVGdlbutton", class="download_this")),
                       br()
                     )
+                  ),
+                  tabPanel(
+                    "Download Results", 
+                    tableOutput("data_output"),
+                    conditionalPanel(
+                      condition = "output.data_output != undefined",
+                      em(textOutput("output_size"))
+                    ),
+                    br(),
+                    uiOutput("csv_dlbutton", class="download_this" ), uiOutput("tsv_dlbutton", class="download_this"), uiOutput("xlsx_dlbutton", class="download_this")
                   )
+                  
       )
     )
   ),
