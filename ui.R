@@ -6,7 +6,6 @@ scores <- c("GenieScore", "IsoGenie", "OmniGenie", "IsoOmniGenie")
 images <- c("gs.png", "isg.png", "og.png", "iog.png")
 
 
-#shinyUI(navbarPage("  SurfaceGenie  ", theme = "bootstrap.css",
 shinyUI(navbarPage("", theme = "bootstrap.css",
   
   ##########    Home    ##########
@@ -57,11 +56,8 @@ shinyUI(navbarPage("", theme = "bootstrap.css",
                 accept=c(".csv", ".tsv", ".txt", ".tab", ".xls", ".xlsx"), 
                 buttonLabel = "Browse...", placeholder = "No file selected"),
       h5(class="text-info", "Scoring Options"),
-      #### regular GS
-      #### GS, no SPC = iGenie
-      #### GS reversed = eineG
-      #### GS reversed, no SPC = eineGi
-      conditionalPanel(
+
+        conditionalPanel(
         condition = "input.species!='Other/Ignore'",
         checkboxGroupInput(
           "scoring_opts", label=NULL,
@@ -72,9 +68,7 @@ shinyUI(navbarPage("", theme = "bootstrap.css",
             )
           }, SIMPLIFY = FALSE, USE.NAMES = FALSE),
         choiceValues = list(
-#          "GS", "eineG", "iGenie", "eineGi"),
-#        selected = list("GS")
-        "GS", "IsoGenie", "OmniGenie", "IsoOmniGenie")
+          "GS", "IsoGenie", "OmniGenie", "IsoOmniGenie")
         )
       ),
       conditionalPanel(
@@ -88,8 +82,6 @@ shinyUI(navbarPage("", theme = "bootstrap.css",
             )
           }, SIMPLIFY = FALSE, USE.NAMES = FALSE),
           choiceValues = list(
-#            "iGenie", "eineGi"),
-#          selected = list("GS")
           "OmniGenie", "IsoOmniGenie")
       )
       ),
@@ -103,8 +95,6 @@ shinyUI(navbarPage("", theme = "bootstrap.css",
           "Mouse",
           "Other/Ignore"),
         selected = list("Human")
-        #        choiceNames = NULL,
-        #        choiceValues = NULL
       ),      
 
       h1(),
@@ -184,9 +174,7 @@ shinyUI(navbarPage("", theme = "bootstrap.css",
           "Signal strength (SS)"
         ),
         choiceValues = list(
-#          "SPC", "Gini", "SS"),
-#        selected = list("GS")
-        "SPC", "Gini", "SS")
+          "SPC", "Gini", "SS")
       )
       ),
       conditionalPanel(
@@ -198,9 +186,7 @@ shinyUI(navbarPage("", theme = "bootstrap.css",
             "Signal strength (SS)"
           ),
           choiceValues = list(
-#            "Gini", "SS"),
-#          selected = list("GS")
-          "Gini", "SS")
+            "Gini", "SS")
         )
       ),
       conditionalPanel(

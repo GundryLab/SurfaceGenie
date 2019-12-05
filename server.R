@@ -16,7 +16,6 @@ function(input, output, session) {
   
   # Load and process data
   data_input <- reactive({
-#    print("data_input")
     withProgress(message = 'Reading Data', value = 0, {
       parts <- strsplit(input$file1$name, "\\.")[[1]]
       ext <- parts[length(parts)]
@@ -82,7 +81,6 @@ function(input, output, session) {
   
   data_output <- reactive({
 
-#    print("data_output")
     # setting up the progress meter
     progress<-shiny::Progress$new()
     progress$set(message = "Calculating Scores", value=0)
@@ -168,7 +166,6 @@ function(input, output, session) {
   
   # Apply export options
   data_export <- reactive({
-#    print("data_export")
     if(input$species == "Human") {
       df <- SG_export(data_output(), input$export_options1, input$export_options2h, input$scoring_opts)
     } else if(input$species == "Rat") {
@@ -179,10 +176,6 @@ function(input, output, session) {
       df <- SG_export(data_output(), input$export_options1o, input$export_options2, input$scoring_opts_o)
     }
           
-          
-#    names(df)[names(df) == "eineG"] <- "IsoGenie"
-#    names(df)[names(df) == "iGenie"] <- "OmniGenie"
-#    names(df)[names(df) == "eineGi"] <- "IsoOmniGenie"
     output_size <- c(nrow(df), ncol(df))
     list(df, output_size)
   })
@@ -523,7 +516,6 @@ function(input, output, session) {
       } else {
         validate(need(ext=="csv" || ext=="tsv" || ext=="xlsx" || ext=="xls" || ext=="tab" || ext=="txt", "You have the wrong file extension" ))
       }
-#      validate(need(ncol(df)==1, "There is more than one column. Please make sure that you used the correct separator for your file type"))
       df
     })
   })

@@ -12,21 +12,21 @@ split_acc_iso <- function(protID) {
   return(unlist(strsplit(protID, "[-]"))[1])
 }
 
-get_SPC <- function(adata, Accession, species) {
-  if(species=="human"){
-    SPC_scores <- read.csv(file="ref/SPC.csv", header=TRUE)
-  } else if(species=="rat"){
-    SPC_scores <- read.csv(file="ref/Rat_SPC.csv", header=TRUE)
-  } else if(species=="mouse") {
-    SPC_scores <- read.csv(file="ref/Mouse_SPC.csv", header=TRUE)
-  }
-  noiso <- data.frame(Accession)
-  noiso_SPC <- join(noiso, SPC_scores, by="Accession", type="left", match="first")
-  noiso_SPC["SPC"][is.na(noiso_SPC["SPC"])]<-0
-  adata["SPC"] <- noiso_SPC["SPC"]
-  adata["noSPC"] <- matrix(rep(1, nrow(adata)))  
-  return(adata)
-}
+# get_SPC <- function(adata, Accession, species) {
+#   if(species=="human"){
+#     SPC_scores <- read.csv(file="ref/SPC.csv", header=TRUE)
+#   } else if(species=="rat"){
+#     SPC_scores <- read.csv(file="ref/Rat_SPC.csv", header=TRUE)
+#   } else if(species=="mouse") {
+#     SPC_scores <- read.csv(file="ref/Mouse_SPC.csv", header=TRUE)
+#   }
+#   noiso <- data.frame(Accession)
+#   noiso_SPC <- join(noiso, SPC_scores, by="Accession", type="left", match="first")
+#   noiso_SPC["SPC"][is.na(noiso_SPC["SPC"])]<-0
+#   adata["SPC"] <- noiso_SPC["SPC"]
+#   adata["noSPC"] <- matrix(rep(1, nrow(adata)))  
+#   return(adata)
+# }
 
 get_Gini_coeff <- function(sdata, nsamps) {
   cmat <- matrix(rep(t(sdata), nsamps), ncol=nsamps, byrow=TRUE)
@@ -36,24 +36,6 @@ get_Gini_coeff <- function(sdata, nsamps) {
 
 get_signal_strength <- function(sdata) {
   return(log10(max(sdata)+1))
-}
-
-get_dissimilar_score <- function(pdata, nsamps, spctype) {
-  Gmax <- 1 - 1/nsamps
-  if(spctype=="SPC"){
-    return((pdata["Gini"]/Gmax)^2 * pdata["SPC"] * pdata["SS"])
-  }else{
-    return((pdata["Gini"]/Gmax)^2 * pdata["noSPC"] * pdata["SS"])
-  }
-}
-
-get_similar_score <- function(pdata, nsamps, spctype) {
-  Gmax <- 1 - 1/nsamps
-  if(spctype=="SPC"){
-    return(   ( ( 1-(pdata["Gini"]/Gmax)^2))   *   pdata["SPC"]   *   pdata["SS"]  )
-  }else{
-    return(   ( ( 1-(pdata["Gini"]/Gmax)^2))   *   pdata["noSPC"]   *   pdata["SS"]  )
-  }
 }
 
 group_samples <- function(adata, groupmethod, groupcols){
@@ -82,132 +64,21 @@ append_UPL <- function(adata, Accession){
   return(adata)
 }
 
-get_CD <- function(adata, Accession, species) {
-  if(species=="human") {
-    CD <- read.csv("ref/Human_CD.csv", header=TRUE)
-  } else if (species=="rat") {
-    CD <- read.csv("ref/Rat_CD.csv", header=TRUE)
-  } else if (species=="mouse") {
-    CD <- read.csv("ref/Mouse_CD.csv", header=TRUE)
-  }
-  df <- data.frame(Accession)
-  df <- join(df, CD, by="Accession", match="all")
-  adata["CD"] <- df["CD"]
-  return(adata)
-}
-
-get_trans <- function(adata, Accession, species) {
-  if(species=="human") {
-    trans <- read.delim("ref/human.tab", header=TRUE)
-  } else if (species=="rat") {
-    trans <- read.delim("ref/rat.tab", header=TRUE)
-  } else if (species=="mouse") {
-    trans <- read.delim("ref/mouse.tab", header=TRUE)
-  }
-  df <- data.frame(Accession)
-  df <- join(df, trans, by="Accession", match="all")
-  adata["trans"] <- df["Transmembrane"]
-  return(adata)
-}
-
-get_loc <- function(adata, Accession, species) {
-  if(species=="human") {
-    CC <- read.delim("ref/human.tab", header=TRUE)
-  } else if (species=="rat") {
-    CC <- read.delim("ref/rat.tab", header=TRUE)
-  } else if (species=="mouse") {
-    CC <- read.delim("ref/mouse.tab", header=TRUE)
-  }
-  df <- data.frame(Accession)
-  df <- join(df, CC, by="Accession", match="all")
-  adata["CC"] <- df["CC"]
-  return(adata)
-}
-
-get_numCSPA <- function(adata, Accession) {
-  CSPA <- read.csv("ref/CSPA.csv", header=TRUE)
-  df <- data.frame(Accession)
-  df <- join(df, CSPA, by="Accession", match="all")
-  adata["CSPA #e"] <- df["CSPA..e"]
-  return(adata)
-}
-
-get_HLA <- function(adata, Accession, species) {
-  if(species=="human") {
-    HLA <- read.csv("ref/HLA.csv", header=TRUE)
-  } else if (species=="rat") {
-    HLA <- read.csv("ref/Rat_HLA.csv", header=TRUE)
-  } else if (species=="mouse") {
-    HLA <- read.csv("ref/Mouse_HLA.csv", header=TRUE)
-  }
-  df <- data.frame(Accession)
-  df <- join(df, HLA, by="Accession", match="all")
-  adata["HLA"] <- df["HLA"]
-  return(adata)
-}
-
-
-get_geneName <- function(adata, Accession, species) {
-  if(species=="human") {
-    gn <- read.csv("ref/GeneName.csv", header=TRUE)
-  } else if (species=="rat") {
-    gn <- read.csv("ref/Rat_GeneName.csv", header=TRUE)
-  } else if (species=="mouse") {
-    gn <- read.csv("ref/Mouse_GeneName.csv", header=TRUE)
-  }
-  df <- data.frame(Accession)
-  df <- join(df, gn, by="Accession", match="all")
-  adata["geneName"] <- df["GeneName"]
-  return(adata)
-}
 
 
 ##########  Genie Score Main Function  ##########
 
 SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupcols, anno, updateProgress) {
-#  print("SurfaceGenie")
-#  adata["SPC"][is.na(adata["SPC"])]<-0
-#  print(colnames(adata))
   nsamps <- ncol(adata) - 1
   reqcols <- colnames(adata)
   adata["noiso"] <- laply(laply(adata["Accession"], as.character), split_acc_iso)
-#  print(nrow(adata))
-   print("colnames adata")
-   print(colnames(adata))
-   print("colnames anno")
-   print(colnames(anno))
-   print("rows adata")
-   print(nrow(adata))
-   print("rows anno")
-  print(nrow(anno))
-  # if(is.null(anno)){
-  #   final<-adata
-  #   final["SPC"]<-rep(1,nrow(final))
-  # } else {
-     final<-join(adata, anno, by="noiso", type="left", match="first")
-  # }
-#  print(nrow(final))
-#  a<-adata["Accession"]
-#  b<-final["noiso"]
-#  print(a[!(a %in% b) ])
-  #  accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
+  final<-join(adata, anno, by="noiso", type="left", match="first")
   # Sample grouping
   if("grouping" %in% processing_opts & numgroups > 1){
     adata <- group_samples(adata, groupmethod, groupcols)
     nsamps <- numgroups
     reqcols <- colnames(adata)
   }
-#  print(head(anno[1:3,1:8]))
-#  print(head(adata))
-#  adata<-join(adata, anno, by="Accession")
-#  print(nrow(adata))
-#  print(head(adata[1:3,1:10]))
-  #  adata <- get_SPC(adata, accessions, species)
-  #  adata <- get_CD(adata, accessions, species)
-  # # adata <- get_HLA(adata, accessions, species)
-  #  adata <- get_geneName(adata, accessions, species)
-  #  adata <- get_trans(adata, accessions, species)
-  #  adata <- get_loc(adata, accessions, species)
 
   # rather than pulling apart and inserting into a data frame and 
   # calling functions to calculate the GS, OmniGenie, etc scores, we 
@@ -225,12 +96,8 @@ SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupco
   OmniGenies<-vector(mode="logical",length=0)
   IsoOmniGenies<-vector(mode="logical",length=0)
   
-#  accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)  
-  
   # loop through data set
   # update the progress meter
-#  print(colnames(final))
-#  print(final[2, 3:(nsamps + 2)])
   rows = nrow(final)
   for(irow in 1:rows){
     if(irow%%100==0){
@@ -241,11 +108,7 @@ SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupco
     }
     
     #calculate the scores
-#    if(!is.null(anno)){
-      sdata <- final[irow, 3:(nsamps + 2)]
-#    } else {
-#      sdata <- final[irow, 2:(nsamps + 1)]  
-#    }
+    sdata <- final[irow, 3:(nsamps + 2)]
     spc <- final[irow,"SPC"]
     Gini <- get_Gini_coeff(sdata, nsamps)
     SS <- get_signal_strength(sdata)
@@ -253,6 +116,7 @@ SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupco
     IsoOmniGenie <- (1-(Gini/Gmax)^2) * SS
     GS <- OmniGenie * spc
     IsoGenie <-IsoOmniGenie * spc
+    
     # append the scores to each vector
     Ginis<-append(Ginis, Gini)
     SSs<-append(SSs, SS)
@@ -273,78 +137,17 @@ SurfaceGenie <- function(adata, processing_opts, groupmethod, numgroups, groupco
 }
 
 ##########  SurfaceGenie Export  ##########
+# Most everything in here has been removed because rather than adding each 
+# annotation as it was clicked, I just put it all in one annotation file and
+# display it or not as it is clicked
 
 SG_export <- function(adata, exportvars1, exportvars2 , scoringvars) {
-#  no_exportvars1 <- list("SPC")
-#  no_exportvars2 <- list("HLA", "CD", "geneName", "CSPA..e", "Transmembrane", "CC", "UniProt Linkout")
-#  no_scoringvars <-list("GS", "IsoGenie")
-#  print("SG_export")
-#  print(colnames(adata))
-#  print(nrow(adata))
-#  print(length(exportvars1))
-#  print(length(exportvars2))
-#  print(length(scoringvars))
-#  print(colnames(adata))
-#  cols <- length(exportvars1) + length(exportvars2) + length(scoringvars)
-#  cols <- ncol(adata)-length(exportvars1)-length(exportvars2)-length(scoringvars)
-  print("SG_Export, columns in dataset")
-  print(colnames(adata))
-  print(ncol(adata))
-#  if(ncol(adata)<10){
-#    reqcols <- colnames(adata)[1:(ncol(adata)-6)]
-#  } else {
-    reqcols <- colnames(adata)[2:(ncol(adata)-13)]
-#  }
-  print("reqcols, exportvars1, exportvars2, scoringvars")
-  print(reqcols)
-  print(exportvars1)
-  print(exportvars2)
-  print(scoringvars)
-  # if(ncol(adata)<10){
-  #   exportvars1 <- exportvars1[!exportvars1 %in% no_exportvars1]
-  #   exportvars2 <- exportvars2[!exportvars2 %in% no_exportvars2]
-  #   scoringvars <- scoringvars[!scoringvars %in% no_scoringvars]
-  #   print(reqcols)
-  #   print(exportvars1)
-  #   print(exportvars2)
-  #   print(scoringvars)
-  # }
-#  accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
-#  adata["noiso"] <- accessions
-#  final<-merge(adata, anno, by.x="noiso", by.y="Accession", type="left", match="first")
-#  adata["SPC"][is.na(adata["SPC"])]<-0
-  # # accessions <- laply(laply(adata["Accession"], as.character), split_acc_iso)
-  # print(paste("start: ", nrow(adata)))
-  # reqcols <- colnames(adata)[1:(ncol(adata)-13)]
-  # noiso <- data.frame(accessions)
-  # colnames(noiso)[colnames(noiso)=="accessions"] <- "Accession"
-  # noiso_anno <- join(noiso, anno, by="Accession", type="left", match="first")
-  # print(paste("noiso_anno: ", nrow(noiso_anno)))
-  # a<-adata["Accession"]
-  # b<-noiso_anno["Accession"]  
-  # print(a[!(a %in% b) ])
-  # adata <- merge(adata, noiso_anno)  
-  # print(paste("adata: ", nrow(adata)))
-  # adata["SPC"][is.na(adata["SPC"])]<-0
-#  adata["noSPC"] <- matrix(rep(1, nrow(adata)))
-  
-# #  adata <- get_SPC(adata, accessions, species)
-# #  adata <- get_CD(adata, accessions, species)
-#   adata <- get_HLA(adata, accessions, species)
-# #  adata <- get_geneName(adata, accessions, species)
-# #  adata <- get_trans(adata, accessions, species)
-# #  adata <- get_loc(adata, accessions, species)
-  
+  reqcols <- colnames(adata)[2:(ncol(adata)-13)]
 
   # Export option: append uniprot linkout column
   if("UniProt Linkout" %in% exportvars2){
     adata <- append_UPL(adata, accessions)
   }
-
-  # # Export option: append # CSPA experiments
-  # if("CSPA #e" %in% exportvars2){
-  #   adata <- get_numCSPA(adata, accessions)
-  # }
 
   # Return data with export options as well as dataframe size
   return(adata[,c(reqcols, scoringvars, exportvars1, exportvars2)])
