@@ -5,7 +5,7 @@ library(RColorBrewer)
 library(stringr)
 #library(ggplot2)
 library(svglite)
-#library(xlsx)
+library(xlsx)
 source("functions.R")
 `%then%` <- shiny:::`%OR%`
 
