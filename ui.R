@@ -12,7 +12,18 @@ shinyUI(navbarPage("", theme = "bootstrap.css",
   
   tabPanel(
     "Surface Genie",
-    div(
+    tags$head(tags$script(HTML('
+      var fakeClick = function(tabName) {
+        var dropdownList = document.getElementsByTagName("a");
+        for (var i = 0; i < dropdownList.length; i++) {
+          var link = dropdownList[i];
+          if(link.getAttribute("data-value") == tabName) {
+            link.click();
+          };
+        }
+      };
+      '))),
+    
      h4("Welcome to ", span(class ="text-success", "SurfaceGenie"),"!"),
      p(tags$i("Integrating predictive and empirical data for rational marker prioritization")),
 #      tags$img(src="website_homepage.png", width="330px", align="right"),
@@ -20,8 +31,9 @@ shinyUI(navbarPage("", theme = "bootstrap.css",
      p("In developing SurfaceGenie we aimed to create an accessible tool for calculation of GenieScore and GenieScore components from input data. Details regarding these calculations can be found in the ", a(href="https://www.biorxiv.org/content/10.1101/575969v2", "corresponding publication"), " or the ", a(href="UserGuide.docx", "User Guide"), ". For all calculations, users are able to export the calculated values and plots generated from analysis of their input data."),
      p("SurfaceGenie was written in R and the web application was developed using the Shiny library. Source code and all reference lookup tables are publicly available ", a(href="https://github.com/GundryLab/SurfaceGenie", "at GitHub"), "."),
      br(), 
-     tags$img(src="visual_instructions.png", width="800px") #, align="right")
-    )
+     div(style="width:20%;display:block;margin-left:auto;margin-right:auto",
+       tags$script(type="text/javascript", id="clustrmaps", src="https://cdn.clustrmaps.com/map_v2.js?d=VJztTvZJUQlwpFCwOOYTSK6ktP0YBoNDEMPj1OS_ID0&cl=ffffff&w=a")
+     )
   ),
 
   
@@ -31,11 +43,11 @@ shinyUI(navbarPage("", theme = "bootstrap.css",
     "Instructions",
     div(
       p(tags$i("Before you begin:")),
-      p("It is strongly recommended all users read the User Guide, found here, which has step-by-step tutorials for both the GenieScore Calculator and the SPC Score Lookup tools. The UserGuide comprehensively defines all of the features available in the SurfaceGenie web application including some background on the theory and calculations."),
+      p("It is strongly recommended that all users read the ", a(href="UserGuide.docx", "User Guide"), " which has step-by-step tutorials for both the GenieScore Calculator and the SPC Score Lookup tools. The User Guide comprehensively defines all of the features available in the SurfaceGenie web application including some background on the theory and calculations."),
       p(tags$i("Conversion to Uniprot Accession IDs:")),
       p("SurfaceGenie operates with Uniprot Accession IDs only. Bulk conversion of alternate IDs to Uniprot IDs can be performed using the ‘Retrieve/ID mapping tool’ available on the Uniprot website, found here. Note that conversion between IDs is not always one-to-one. Manual curation of the results from the ID mapping is advisable."),
       p(tags$i("Species availability:")),
-      p("Currently, most functions on SurfaceGenie are available only for human, mouse, and rat data. Calculation of some GenieScore permutations do not require Accession numbers, and will work on any type input data (see User Guide for more information). If you have requests for species, please reach out on the contact page."),
+      p("Currently, most functions on SurfaceGenie are available only for human, mouse, and rat data. Calculation of some GenieScore permutations do not require Accession numbers, and will work on any type input data (see User Guide for more information). If you have requests for additional species, please ", a(href="#Contact", "contact us", onclick = "fakeClick('Contact')"), "."),
       p(tags$i("Example files:")),
       p("Examples of files formatted correctly for the GenieScore Calculator and the SPC Score Lookup tools can be downloaded here. For more information, please refer to the User Guide."),
       p(a(href="Boheler_CSC_CompiledData.csv", "GenieScore Calculator example file")),
@@ -372,12 +384,12 @@ shinyUI(navbarPage("", theme = "bootstrap.css",
                     p("With this method, the original upload file will be returned as a downloadable csv file which includes a column containing SPC Scores appended to the original input file.")
                   ),
                   tabPanel(
-                    "Option 1",
+                    "Output Option 1",
                     plotOutput("SPC_quick_hist"),
                     tableOutput("SPC_quick_output")
                   ),
                   tabPanel(
-                    "Option 2",
+                    "Output Option 2",
                     plotOutput("SPC_bulk_hist"),
                     tableOutput("SPC_bulk_output"),
                     br(),
