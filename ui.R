@@ -12,6 +12,12 @@ shinyUI(navbarPage("", theme = "bootstrap.css",
   
   tabPanel(
     "Surface Genie",
+    # JavaScript to make links to the "Contact Us" tab
+    # Because the anchors are created dynamically, there is no way to know what to use for the 
+    # href part of an <a> tag that wants to link to the "Contacts" tab.  Luckily, anchors keep
+    # a value called "data-value" that keeps the name of the tab.  So we use JavaScript in the 
+    # browser to find all the a tags, look for which one has the data-value set to "contact" 
+    # and grab the dynamically generated anchor and click it.
     tags$head(tags$script(HTML('
       var fakeClick = function(tabName) {
         var dropdownList = document.getElementsByTagName("a");
@@ -24,9 +30,9 @@ shinyUI(navbarPage("", theme = "bootstrap.css",
       };
       '))),
     
-     h4("Welcome to ", span(class ="text-success", "SurfaceGenie"),"!"),
+    tags$img(src="website_homepage.png", width="330px", align="right"),
+    h4("Welcome to ", span(class ="text-success", "SurfaceGenie"),"!"),
      p(tags$i("Integrating predictive and empirical data for rational marker prioritization")),
-#      tags$img(src="website_homepage.png", width="330px", align="right"),
      p("SurfaceGenie is a web app for analyzing omic datasets (e.g. proteomic, transcriptomic) to prioritize candidate cell-type specific markers of interest for immunophenotyping, immunotherapy, drug targeting, and other applications. It works by calculating the likelihood a molecule is informative for distinguishing among sample groups (e.g. cell types, experimental conditions)."),
      p("In developing SurfaceGenie we aimed to create an accessible tool for calculation of GenieScore and GenieScore components from input data. Details regarding these calculations can be found in the ", a(href="https://www.biorxiv.org/content/10.1101/575969v2", "corresponding publication"), " or the ", a(href="UserGuide.docx", "User Guide"), ". For all calculations, users are able to export the calculated values and plots generated from analysis of their input data."),
      p("SurfaceGenie was written in R and the web application was developed using the Shiny library. Source code and all reference lookup tables are publicly available ", a(href="https://github.com/GundryLab/SurfaceGenie", "at GitHub"), "."),
@@ -42,18 +48,19 @@ shinyUI(navbarPage("", theme = "bootstrap.css",
   tabPanel(
     "Instructions",
     div(
-      p(tags$i("Before you begin:")),
+      p(style="font-size: 17px", tags$i("Before you begin:")),
+#      p(em("Before you begin:")),
       p("It is strongly recommended that all users read the ", a(href="UserGuide.docx", "User Guide"), " which has step-by-step tutorials for both the GenieScore Calculator and the SPC Score Lookup tools. The User Guide comprehensively defines all of the features available in the SurfaceGenie web application including some background on the theory and calculations."),
-      p(tags$i("Conversion to Uniprot Accession IDs:")),
+      p(style="font-size: 17px", tags$i("Conversion to Uniprot Accession IDs:")),
       p("SurfaceGenie operates with Uniprot Accession IDs only. Bulk conversion of alternate IDs to Uniprot IDs can be performed using the ‘Retrieve/ID mapping tool’ available on the Uniprot website, found here. Note that conversion between IDs is not always one-to-one. Manual curation of the results from the ID mapping is advisable."),
-      p(tags$i("Species availability:")),
+      p(style="font-size: 17px", tags$i("Species availability:")),
       p("Currently, most functions on SurfaceGenie are available only for human, mouse, and rat data. Calculation of some GenieScore permutations do not require Accession numbers, and will work on any type input data (see User Guide for more information). If you have requests for additional species, please ", a(href="#Contact", "contact us", onclick = "fakeClick('Contact')"), "."),
-      p(tags$i("Example files:")),
+      p(style="font-size: 17px", tags$i("Example files:")),
       p("Examples of files formatted correctly for the GenieScore Calculator and the SPC Score Lookup tools can be downloaded here. For more information, please refer to the User Guide."),
-      p(a(href="Boheler_CSC_CompiledData.csv", "GenieScore Calculator example file")),
-      p(a(href="CMs_Accession.csv", "SPC Score Lookup example file")),
+      p(a(href="ExampleDataForSurfaceGenie.csv", "GenieScore Calculator example file")),
+      p(a(href="ExampleDataForSPCdownload.csv", "SPC Score Lookup example file")),
       br(),
-      p(tags$i("Overview of Instructions:")),
+      p(style="font-size: 17px", tags$i("Overview of Instructions:")),
       tags$img(src="visual_instructions.png", width="800px") #, align="right")
       )
     ),
@@ -67,8 +74,21 @@ shinyUI(navbarPage("", theme = "bootstrap.css",
       fileInput("file1", "Choose Input File", multiple =FALSE, 
                 accept=c(".csv", ".tsv", ".txt", ".tab", ".xls", ".xlsx"), 
                 buttonLabel = "Browse...", placeholder = "No file selected"),
-      h5(class="text-info", "Scoring Options"),
 
+      h5(class="text-info", "Species"),
+      radioButtons(
+        "species", NULL,
+        choices = list(
+          "Human",
+          "Rat",
+          "Mouse",
+          "Other/Ignore"),
+        selected = list("Human")
+      ),      
+      
+      h1(),
+      h5(class="text-info", "Scoring Options"),
+      
         conditionalPanel(
         condition = "input.species!='Other/Ignore'",
         checkboxGroupInput(
@@ -97,18 +117,6 @@ shinyUI(navbarPage("", theme = "bootstrap.css",
           "OmniGenie", "IsoOmniGenie")
       )
       ),
-      h1(),
-      h5(class="text-info", "Species"),
-      radioButtons(
-        "species", NULL,
-        choices = list(
-          "Human",
-          "Rat",
-          "Mouse",
-          "Other/Ignore"),
-        selected = list("Human")
-      ),      
-
       h1(),
       h5(class="text-info", "Processing Option"),
       checkboxGroupInput(
@@ -426,11 +434,11 @@ shinyUI(navbarPage("", theme = "bootstrap.css",
         tags$li( "Diaz-Ramos MC, Engel P, & Bastos R (2011) Towards a comprehensive human cell-surface immunome database. Immunol Lett 134(2):183-187.")
       )
     ),
-    br(),
-    div(
-      h4("Users:"),
-      tags$script(type="text/javascript", id="clustrmaps", src="https://cdn.clustrmaps.com/map_v2.js?d=VJztTvZJUQlwpFCwOOYTSK6ktP0YBoNDEMPj1OS_ID0&cl=ffffff&w=a")
-      )
+    br()
+#    div(
+#      h4("Users:"),
+#      tags$script(type="text/javascript", id="clustrmaps", src="https://cdn.clustrmaps.com/map_v2.js?d=VJztTvZJUQlwpFCwOOYTSK6ktP0YBoNDEMPj1OS_ID0&cl=ffffff&w=a")
+#      )
     ),
 
   ##########    Contact   ##########
