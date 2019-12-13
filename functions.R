@@ -158,6 +158,7 @@ SG_export <- function(adata, exportvars1, exportvars2 , scoringvars) {
 
 SPC_hist <- function(adata) {
   scores <- adata[["SPC"]]
+  scores[is.na(scores)]<-"NA"
   counts <- count(scores)
   barplot(counts[["freq"]], names.arg=counts[["x"]], xlab="SPC Score", ylab="frequency", 
           main="SPC Score Histogram", col="#3498db", border="white")

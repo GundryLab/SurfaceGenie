@@ -156,7 +156,7 @@ function(input, output, session) {
                    groupmethod=NULL, numgroups=0, groupcols=NULL, annotation(), updateProgress)
     }
     if(length(which(as.vector(sapply(sg["SPC"],is.na))==TRUE))>0) {
-      warningMsg <- "There are accessions that do not belong to the organism you selected. They will be ignored for SurfaceGenie Score and IsoGenie Score. Download the csv file to find which ones."
+      warningMsg <- "There are accessions that do not belong to the most recent swissprot version for the species you selected. They will be ignored for SurfaceGenie Score and IsoGenie Score. Download the csv file to find which ones."
       output$txtWarning<-renderText(warningMsg)
     }
     return(sg)
