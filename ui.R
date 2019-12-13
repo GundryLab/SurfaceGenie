@@ -60,9 +60,11 @@ shinyUI(navbarPage("", theme = "bootstrap.css",
       p(a(href="ExampleDataForSurfaceGenie.csv", "GenieScore Calculator example file")),
       p(a(href="ExampleDataForSPCdownload.csv", "SPC Score Lookup example file")),
       br(),
-      p(style="font-size: 17px", tags$i("Overview of Instructions:")),
-      tags$img(src="visual_instructions.png", width="800px") #, align="right")
-      )
+      p(style="font-size: 17px", tags$i("GenieScore Quick Overview:")),
+      tags$img(src="GSC_instructions.png", width="800px"), #, align="right"),
+      p(style="font-size: 17px", tags$i("SPC Score Lookup Quick Overview:")),
+      tags$img(src="SSL_instructions.png", width="800px") #, align="right")
+    )
     ),
   
   ##########  SurfaceGenie ##########
