@@ -36,6 +36,12 @@ function(input, output, session) {
 
       # validation
       validate(
+        need(colnames(df)[1]=="Accession",'The name of the first column must be "Accession"')
+      )
+      
+      
+      # validation
+      validate(
         need(ncol(df)>1,"There is only one column of data.  This is probably caused by one of two things.  Either you used the wrong field delimiter - e.g. tabs instead of commas - or you need to enter one or more samples and their abundance data."),
         need(length(which(as.vector(sapply(df[2:3],is.numeric))==FALSE))==0,"There is a non-numeric value in the abundance data columns.  The first column should be accessions and each column after that should be numbers representing the abundance of the protein for that sample.  Please refer to the instructions for more help.")
       )

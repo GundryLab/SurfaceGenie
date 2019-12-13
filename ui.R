@@ -38,7 +38,7 @@ shinyUI(navbarPage("", theme = "bootstrap.css",
      p("SurfaceGenie was written in R and the web application was developed using the Shiny library. Source code and all reference lookup tables are publicly available ", a(href="https://github.com/GundryLab/SurfaceGenie", "at GitHub"), "."),
      br(), 
 #     div(style="width:20%;display:block;margin-left:auto;margin-right:auto",
-     div(style="width:20%;display:block;margin-right:auto",
+     div(style="width:25%;display:block;margin-right:auto",
              tags$script(type="text/javascript", id="clustrmaps", src="https://cdn.clustrmaps.com/map_v2.js?d=VJztTvZJUQlwpFCwOOYTSK6ktP0YBoNDEMPj1OS_ID0&cl=ffffff&w=a")
      )
   ),
