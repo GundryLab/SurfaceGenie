@@ -420,7 +420,7 @@ shinyUI(navbarPage("", theme = "bootstrap.css",
       p("If you use any of the SurfaceGenie tools in your work, please cite the original manuscript:"),
       p("Waas M, Snarrenberg ST, Littrell J, Jones Lipinski RA, Hansen PA, Corbett JA, Gundry RL, 
         SurfaceGenie: A web-based application for prioritizing cell-type specific marker candidates,", 
-        tags$a(href="https://doi.org/10.1101/575969", "https://doi.org/10.1101/575969"))
+        tags$a(href="https://www.ncbi.nlm.nih.gov/pubmed/32053146/", "https://www.ncbi.nlm.nih.gov/pubmed/32053146/"))
     ),
     br(),
     div(
