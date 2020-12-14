@@ -482,7 +482,7 @@ function(input, output, session) {
   SPC_quick_input <- reactive({
     numprots <- str_count(input$quicklookup, pattern="\\n") + 1
     validate(
-      need(numprots <= 100, "Too many accession numbers! (Max: 100)")
+      need(numprots <= 250, "Too many accession numbers! (Max: 250)")
     )
     proteins = data.frame(Accession=rep(0, numprots))
     for (p in 1:numprots)
